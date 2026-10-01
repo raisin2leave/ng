@@ -1,0 +1,45 @@
+<div class="restaurant-list">
+
+  @for (restaurant of restaurants(); track restaurant.id) {
+
+    <article class="restaurant-card">
+
+      <img
+        [src]="restaurant.imageUrl"
+        [alt]="restaurant.name"
+      >
+
+      <div class="restaurant-info">
+
+        <div class="restaurant-header">
+          <h2>{{ restaurant.name }}</h2>
+
+          @if (restaurant.isActive) {
+            <span class="status open">OPEN</span>
+          } @else {
+            <span class="status closed">CLOSED</span>
+          }
+        </div>
+
+        <p>{{ restaurant.description }}</p>
+
+        <p><strong>Cuisine:</strong> {{ restaurant.cuisine }}</p>
+
+        <p> {{ restaurant.rating }}</p>
+
+        <p>
+          {{ restaurant.deliveryTimeMin }}–{{ restaurant.deliveryTimeMax }}
+          min
+        </p>
+
+        <p>
+          Delivery: {{ restaurant.deliveryFee }} zł
+        </p>
+
+      </div>
+
+    </article>
+
+  }
+
+</div>
