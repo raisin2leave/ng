@@ -1,12 +1,24 @@
-<div class="filters">
-  <label for="search" class="form-label">Search:</label>
-  <input
-    id="search"
-    type="text"
-    class="form-control"
-    placeholder="np. burger"
-    [(ngModel)]="searchText"
-  >
+<div class="filters row g-3">
+  <div class="col-md-6">
+    <label for="search" class="form-label">Search:</label>
+    <input
+      id="search"
+      type="text"
+      class="form-control"
+      placeholder="np. burger"
+      [(ngModel)]="searchText"
+    >
+  </div>
+
+  <div class="col-md-3">
+    <label for="cuisine" class="form-label">Cuisine:</label>
+    <select id="cuisine" class="form-select" [(ngModel)]="selectedCuisine">
+      <option value="all">Wszystkie</option>
+      @for (option of cuisineOptions; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+  </div>
 </div>
 
 <section class="restaurant-list">
