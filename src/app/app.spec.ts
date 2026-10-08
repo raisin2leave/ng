@@ -9,7 +9,7 @@ describe('App', () => {
 
   it('should show the app name in the header', () => {
     const fixture = TestBed.createComponent(App);
-    fixture.detectChanges(); // draw the HTML
+    fixture.detectChanges();
     const page: HTMLElement = fixture.nativeElement;
     expect(page.querySelector('app-header')?.textContent).toContain('FoodApp');
   });

@@ -1,7 +1,16 @@
+<div class="filters">
+  <label for="search" class="form-label">Search:</label>
+  <input
+    id="search"
+    type="text"
+    class="form-control"
+    placeholder="np. burger"
+    [(ngModel)]="searchText"
+  >
+</div>
+
 <section class="restaurant-list">
-  <!-- Repeat for every restaurant in the list -->
-  @for (restaurant of restaurants; track restaurant.id) {
-    <!-- Create one card and GIVE it this restaurant -->
+  @for (restaurant of filteredRestaurants(); track restaurant.id) {
     <app-rest-card [restaurant]="restaurant" />
   }
 </section>

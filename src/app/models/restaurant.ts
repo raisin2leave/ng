@@ -1,5 +1,3 @@
-// All cuisine types that exist in our data.
-// CuisineType.Italian is simply the text 'italian'.
 export enum CuisineType {
   Italian = 'italian',
   Polish = 'polish',
@@ -8,8 +6,6 @@ export enum CuisineType {
   American = 'american',
 }
 
-// The shape of one restaurant object (required by Lab 1).
-// The ? after imageUrl means this field is optional.
 export type Restaurant = {
   id: number;
   name: string;
