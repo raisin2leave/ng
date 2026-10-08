@@ -1,45 +1,39 @@
-<div class="restaurant-list">
+<article class="restaurant-card">
 
-  @for (restaurant of restaurants(); track restaurant.id) {
+  <!-- ?w=600 asks Unsplash for a small 600px photo (originals are 3 MB each) -->
+  <img
+    [src]="restaurant().imageUrl + '?w=600'"
+    [alt]="restaurant().name"
+    loading="lazy"
+  >
 
-    <article class="restaurant-card">
+  <div class="restaurant-info">
 
-      <img
-        [src]="restaurant.imageUrl"
-        [alt]="restaurant.name"
-      >
+    <div class="restaurant-header">
+      <h2>{{ restaurant().name }}</h2>
 
-      <div class="restaurant-info">
+      @if (restaurant().isActive) {
+        <span class="status open">OPEN</span>
+      } @else {
+        <span class="status closed">CLOSED</span>
+      }
+    </div>
 
-        <div class="restaurant-header">
-          <h2>{{ restaurant.name }}</h2>
+    <p>{{ restaurant().description }}</p>
 
-          @if (restaurant.isActive) {
-            <span class="status open">OPEN</span>
-          } @else {
-            <span class="status closed">CLOSED</span>
-          }
-        </div>
+    <p><strong>Cuisine:</strong> {{ restaurant().cuisine }}</p>
 
-        <p>{{ restaurant.description }}</p>
+    <p><strong>Rating:</strong> ⭐ {{ restaurant().rating }}</p>
 
-        <p><strong>Cuisine:</strong> {{ restaurant.cuisine }}</p>
+    <p>
+      <strong>Delivery time:</strong>
+      {{ restaurant().deliveryTimeMin }}–{{ restaurant().deliveryTimeMax }} min
+    </p>
 
-        <p> {{ restaurant.rating }}</p>
+    <p><strong>Delivery:</strong> {{ restaurant().deliveryFee }} zł</p>
 
-        <p>
-          {{ restaurant.deliveryTimeMin }}–{{ restaurant.deliveryTimeMax }}
-          min
-        </p>
+    <p><strong>Min. order:</strong> {{ restaurant().minimumOrderValue }} zł</p>
 
-        <p>
-          Delivery: {{ restaurant.deliveryFee }} zł
-        </p>
+  </div>
 
-      </div>
-
-    </article>
-
-  }
-
-</div>
+</article>

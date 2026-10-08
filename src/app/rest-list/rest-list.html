@@ -1,3 +1,7 @@
-<section class="list">
-    <app-rest-card/>
+<section class="restaurant-list">
+  <!-- Repeat for every restaurant in the list -->
+  @for (restaurant of restaurants; track restaurant.id) {
+    <!-- Create one card and GIVE it this restaurant -->
+    <app-rest-card [restaurant]="restaurant" />
+  }
 </section>
