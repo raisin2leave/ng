@@ -24,11 +24,13 @@ export class RestList {
   searchText = signal('');
   selectedCuisine = signal('all');
   selectedStatus = signal('all');
+  sortBy = signal('rating');
 
   filteredRestaurants = computed(() => {
     const search = this.searchText().toLowerCase();
     const cuisine = this.selectedCuisine();
     const status = this.selectedStatus();
+    const sortBy = this.sortBy();
     const result: Restaurant[] = [];
 
     for (const restaurant of this.allRestaurants) {
@@ -47,6 +49,14 @@ export class RestList {
       }
 
       result.push(restaurant);
+    }
+
+    if (sortBy === 'rating') {
+      result.sort((a, b) => b.rating - a.rating);
+    } else if (sortBy === 'deliveryTime') {
+      result.sort((a, b) => a.deliveryTimeMin - b.deliveryTimeMin);
+    } else if (sortBy === 'deliveryFee') {
+      result.sort((a, b) => a.deliveryFee - b.deliveryFee);
     }
 
     return result;

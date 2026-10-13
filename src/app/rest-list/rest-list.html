@@ -1,5 +1,5 @@
 <div class="filters row g-3">
-  <div class="col-md-6">
+  <div class="col-md-3">
     <label for="search" class="form-label">Search:</label>
     <input
       id="search"
@@ -25,6 +25,15 @@
     <select id="status" class="form-select" [(ngModel)]="selectedStatus">
       <option value="all">Wszystkie</option>
       <option value="open">Czynne teraz</option>
+    </select>
+  </div>
+
+  <div class="col-md-3">
+    <label for="sort" class="form-label">Sort:</label>
+    <select id="sort" class="form-select" [(ngModel)]="sortBy">
+      <option value="rating">Rating (najwyższy)</option>
+      <option value="deliveryTime">Czas dostawy (najkrótszy)</option>
+      <option value="deliveryFee">Koszt dostawy (najniższy)</option>
     </select>
   </div>
 </div>
