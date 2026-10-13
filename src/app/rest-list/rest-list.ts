@@ -23,10 +23,12 @@ export class RestList {
 
   searchText = signal('');
   selectedCuisine = signal('all');
+  selectedStatus = signal('all');
 
   filteredRestaurants = computed(() => {
     const search = this.searchText().toLowerCase();
     const cuisine = this.selectedCuisine();
+    const status = this.selectedStatus();
     const result: Restaurant[] = [];
 
     for (const restaurant of this.allRestaurants) {
@@ -37,6 +39,10 @@ export class RestList {
       }
 
       if (cuisine !== 'all' && restaurant.cuisine !== cuisine) {
+        continue;
+      }
+
+      if (status === 'open' && !restaurant.isActive) {
         continue;
       }
 
