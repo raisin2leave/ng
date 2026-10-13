@@ -61,4 +61,11 @@ export class RestList {
 
     return result;
   });
+
+  resetFilters() {
+    this.searchText.set('');
+    this.selectedCuisine.set('all');
+    this.selectedStatus.set('all');
+    this.sortBy.set('rating');
+  }
 }
