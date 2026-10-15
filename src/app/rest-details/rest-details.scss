@@ -74,14 +74,8 @@
   font-size: 1.3rem;
 }
 
-.product-list {
-  list-style: none;
-  padding: 0;
-}
-
-.product-list li {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #eee;
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
 }

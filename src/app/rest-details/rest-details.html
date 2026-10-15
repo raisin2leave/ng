@@ -38,14 +38,11 @@
         <section class="menu-category">
           <h3>{{ category.name }}</h3>
 
-          <ul class="product-list">
+          <div class="product-grid">
             @for (product of category.products; track product.id) {
-              <li>
-                <span>{{ product.name }}</span>
-                <span>{{ product.price }} zł</span>
-              </li>
+              <app-product-card [product]="product" />
             }
-          </ul>
+          </div>
         </section>
       }
     } @else {

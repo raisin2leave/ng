@@ -1,0 +1,25 @@
+<article class="product-card">
+
+  <img
+    [src]="product().imageUrl + '?w=400'"
+    [alt]="product().name"
+    loading="lazy"
+  >
+
+  <div class="product-info">
+    <h4>{{ product().name }}</h4>
+
+    <p class="description">{{ product().description }}</p>
+
+    <div class="product-footer">
+      <span class="price">{{ product().price.toFixed(2) }} zł</span>
+
+      @if (product().isAvailable) {
+        <span class="availability available">Dostępny</span>
+      } @else {
+        <span class="availability unavailable">Niedostępny</span>
+      }
+    </div>
+  </div>
+
+</article>

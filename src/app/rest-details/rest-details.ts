@@ -1,5 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ProductCard } from '../product-card/product-card';
 import { Restaurant } from '../models/restaurant';
 import { Menu } from '../models/menu';
 import restaurantsData from '../data/restaurants.json';
@@ -7,7 +8,7 @@ import menusData from '../data/menus.json';
 
 @Component({
   selector: 'app-rest-details',
-  imports: [RouterLink],
+  imports: [RouterLink, ProductCard],
   templateUrl: './rest-details.html',
   styleUrl: './rest-details.scss',
 })
