@@ -30,6 +30,27 @@
       <li><strong>Koszt dostawy:</strong> {{ restaurant.deliveryFee }} zł</li>
       <li><strong>Min. zamówienie:</strong> {{ restaurant.minimumOrderValue }} zł</li>
     </ul>
+
+    <h2 class="menu-title">Menu</h2>
+
+    @if (menu(); as menu) {
+      @for (category of menu.categories; track category.name) {
+        <section class="menu-category">
+          <h3>{{ category.name }}</h3>
+
+          <ul class="product-list">
+            @for (product of category.products; track product.id) {
+              <li>
+                <span>{{ product.name }}</span>
+                <span>{{ product.price }} zł</span>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    } @else {
+      <p class="not-found">Menu jest niedostępne.</p>
+    }
   } @else {
     <p class="not-found">Nie znaleziono restauracji.</p>
   }

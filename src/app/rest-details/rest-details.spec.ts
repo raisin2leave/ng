@@ -13,6 +13,17 @@ describe('RestDetails', () => {
     expect(page.textContent).toContain('Warszawa');
   });
 
+  it('should show the menu of the restaurant cuisine, divided into categories', () => {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    const fixture = TestBed.createComponent(RestDetails);
+    fixture.componentRef.setInput('id', '1');
+    fixture.detectChanges();
+    const page: HTMLElement = fixture.nativeElement;
+    const categories = [...page.querySelectorAll('.menu-category h3')].map((h) => h.textContent);
+    expect(categories).toEqual(['Zupy', 'Pierogi', 'Dania główne', 'Desery']);
+    expect(page.textContent).toContain('Pierogi ruskie');
+  });
+
   it('should show a message for an unknown id', () => {
     TestBed.configureTestingModule({ providers: [provideRouter([])] });
     const fixture = TestBed.createComponent(RestDetails);

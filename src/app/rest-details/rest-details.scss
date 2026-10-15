@@ -59,3 +59,29 @@
   font-size: 1.25rem;
   color: #6c757d;
 }
+
+.menu-title {
+  margin-top: 30px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #ddd;
+}
+
+.menu-category {
+  margin-top: 20px;
+}
+
+.menu-category h3 {
+  font-size: 1.3rem;
+}
+
+.product-list {
+  list-style: none;
+  padding: 0;
+}
+
+.product-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
