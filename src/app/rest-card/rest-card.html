@@ -1,4 +1,4 @@
-<article class="restaurant-card">
+<a class="restaurant-card" [routerLink]="['/restaurant', restaurant().id]">
 
   <img
     [src]="restaurant().imageUrl + '?w=600'"
@@ -35,4 +35,4 @@
 
   </div>
 
-</article>
+</a>

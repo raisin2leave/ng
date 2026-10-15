@@ -1,9 +1,10 @@
 import { Component, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Restaurant } from '../models/restaurant';
 
 @Component({
   selector: 'app-rest-card',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './rest-card.html',
   styleUrl: './rest-card.scss',
 })

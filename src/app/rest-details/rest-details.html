@@ -1,0 +1,36 @@
+<div class="details">
+  <a routerLink="/" class="back-link">← Wróć do listy restauracji</a>
+
+  @if (restaurant(); as restaurant) {
+    <img
+      class="details-image"
+      [src]="restaurant.imageUrl + '?w=1200'"
+      [alt]="restaurant.name"
+    >
+
+    <div class="details-header">
+      <h1>{{ restaurant.name }}</h1>
+
+      @if (restaurant.isActive) {
+        <span class="status open">OPEN</span>
+      } @else {
+        <span class="status closed">CLOSED</span>
+      }
+    </div>
+
+    <p class="description">{{ restaurant.description }}</p>
+
+    <ul class="info">
+      <li><strong>Adres:</strong> {{ restaurant.address }}</li>
+      <li><strong>Rating:</strong> ⭐ {{ restaurant.rating }}</li>
+      <li>
+        <strong>Czas dostawy:</strong>
+        {{ restaurant.deliveryTimeMin }}–{{ restaurant.deliveryTimeMax }} min
+      </li>
+      <li><strong>Koszt dostawy:</strong> {{ restaurant.deliveryFee }} zł</li>
+      <li><strong>Min. zamówienie:</strong> {{ restaurant.minimumOrderValue }} zł</li>
+    </ul>
+  } @else {
+    <p class="not-found">Nie znaleziono restauracji.</p>
+  }
+</div>

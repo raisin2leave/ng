@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { RestCard } from './rest-card';
 import { CuisineType, Restaurant } from '../models/restaurant';
 
@@ -18,6 +19,7 @@ const testRestaurant: Restaurant = {
 
 describe('RestCard', () => {
   it('should show the restaurant name', () => {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
     const fixture = TestBed.createComponent(RestCard);
     fixture.componentRef.setInput('restaurant', testRestaurant);
     fixture.detectChanges();
