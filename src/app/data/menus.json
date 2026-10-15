@@ -1,0 +1,448 @@
+[
+  {
+    "cuisine": "american",
+    "categories": [
+      {
+        "name": "Burgery",
+        "products": [
+          {
+            "id": 101,
+            "name": "Classic Burger",
+            "description": "Wołowina 150 g, sałata, pomidor, cebula i sos burgerowy w maślanej bułce.",
+            "price": 29.99,
+            "imageUrl": "https://images.unsplash.com/photo-1571091718767-18b5b1457add",
+            "isAvailable": true
+          },
+          {
+            "id": 102,
+            "name": "Cheeseburger",
+            "description": "Wołowina 150 g, podwójny ser cheddar, ogórek konserwowy i ketchup.",
+            "price": 32.99,
+            "imageUrl": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90",
+            "isAvailable": true
+          },
+          {
+            "id": 103,
+            "name": "Bacon Burger",
+            "description": "Wołowina 150 g, chrupiący bekon, ser cheddar i sos BBQ.",
+            "price": 35.99,
+            "imageUrl": "https://images.unsplash.com/photo-1553979459-d2229ba7433b",
+            "isAvailable": true
+          },
+          {
+            "id": 104,
+            "name": "Double Smash Burger",
+            "description": "Dwa cienkie kotlety smash, ser amerykański, karmelizowana cebula.",
+            "price": 39.99,
+            "imageUrl": "https://images.unsplash.com/photo-1550547660-d9450f859349",
+            "isAvailable": false
+          }
+        ]
+      },
+      {
+        "name": "Frytki",
+        "products": [
+          {
+            "id": 111,
+            "name": "Frytki klasyczne",
+            "description": "Chrupiące frytki z solą morską.",
+            "price": 9.99,
+            "imageUrl": "https://images.unsplash.com/photo-1541592106381-b31e9677c0e5",
+            "isAvailable": true
+          },
+          {
+            "id": 112,
+            "name": "Frytki z serem",
+            "description": "Frytki polane gorącym sosem serowym i posypane szczypiorkiem.",
+            "price": 14.99,
+            "imageUrl": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877",
+            "isAvailable": true
+          },
+          {
+            "id": 113,
+            "name": "Frytki belgijskie",
+            "description": "Grube frytki smażone dwukrotnie, podawane z majonezem.",
+            "price": 12.99,
+            "imageUrl": "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d",
+            "isAvailable": false
+          }
+        ]
+      },
+      {
+        "name": "Napoje",
+        "products": [
+          {
+            "id": 121,
+            "name": "Coca-Cola 0,33 l",
+            "description": "Schłodzony napój gazowany w puszce.",
+            "price": 6.99,
+            "imageUrl": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97",
+            "isAvailable": true
+          },
+          {
+            "id": 122,
+            "name": "Lemoniada",
+            "description": "Domowa lemoniada z cytryną i miętą.",
+            "price": 9.99,
+            "imageUrl": "https://images.unsplash.com/photo-1621263764928-df1444c5e859",
+            "isAvailable": true
+          },
+          {
+            "id": 123,
+            "name": "Woda mineralna 0,5 l",
+            "description": "Woda niegazowana.",
+            "price": 4.99,
+            "imageUrl": "https://images.unsplash.com/photo-1523362628745-0c100150b504",
+            "isAvailable": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "cuisine": "italian",
+    "categories": [
+      {
+        "name": "Pizza",
+        "products": [
+          {
+            "id": 201,
+            "name": "Margherita",
+            "description": "Sos pomidorowy San Marzano, mozzarella fior di latte, świeża bazylia.",
+            "price": 32.0,
+            "imageUrl": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002",
+            "isAvailable": true
+          },
+          {
+            "id": 202,
+            "name": "Pepperoni",
+            "description": "Sos pomidorowy, mozzarella i pikantne salami pepperoni.",
+            "price": 38.0,
+            "imageUrl": "https://images.unsplash.com/photo-1628840042765-356cda07504e",
+            "isAvailable": true
+          },
+          {
+            "id": 203,
+            "name": "Quattro Formaggi",
+            "description": "Cztery sery: mozzarella, gorgonzola, parmezan i pecorino.",
+            "price": 41.0,
+            "imageUrl": "https://images.unsplash.com/photo-1594007654729-407eedc4be65",
+            "isAvailable": true
+          },
+          {
+            "id": 204,
+            "name": "Capricciosa",
+            "description": "Szynka, pieczarki, karczochy i oliwki na sosie pomidorowym.",
+            "price": 42.0,
+            "imageUrl": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38",
+            "isAvailable": false
+          }
+        ]
+      },
+      {
+        "name": "Makarony",
+        "products": [
+          {
+            "id": 211,
+            "name": "Spaghetti Carbonara",
+            "description": "Guanciale, żółtko, pecorino romano i świeżo mielony pieprz.",
+            "price": 36.0,
+            "imageUrl": "https://images.unsplash.com/photo-1612874742237-6526221588e3",
+            "isAvailable": true
+          },
+          {
+            "id": 212,
+            "name": "Penne Arrabbiata",
+            "description": "Pikantny sos pomidorowy z czosnkiem i chili.",
+            "price": 31.0,
+            "imageUrl": "https://images.unsplash.com/photo-1563379926898-05f4575a45d8",
+            "isAvailable": true
+          },
+          {
+            "id": 213,
+            "name": "Lasagne Bolognese",
+            "description": "Warstwy makaronu, ragù z wołowiny i beszamelu, zapiekane z parmezanem.",
+            "price": 39.0,
+            "imageUrl": "https://images.unsplash.com/photo-1574894709920-11b28e7367e3",
+            "isAvailable": true
+          }
+        ]
+      },
+      {
+        "name": "Desery",
+        "products": [
+          {
+            "id": 221,
+            "name": "Tiramisu",
+            "description": "Biszkopty nasączone espresso, krem mascarpone i kakao.",
+            "price": 19.0,
+            "imageUrl": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9",
+            "isAvailable": true
+          },
+          {
+            "id": 222,
+            "name": "Panna cotta",
+            "description": "Śmietankowy deser z sosem truskawkowym.",
+            "price": 17.0,
+            "imageUrl": "https://images.unsplash.com/photo-1488477181946-6428a0291777",
+            "isAvailable": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "cuisine": "chinese",
+    "categories": [
+      {
+        "name": "Przystawki",
+        "products": [
+          {
+            "id": 301,
+            "name": "Pierożki dim sum",
+            "description": "6 pierożków z krewetkami gotowanych na parze w bambusowym koszyku.",
+            "price": 24.0,
+            "imageUrl": "https://images.unsplash.com/photo-1563245372-f21724e3856d",
+            "isAvailable": true
+          },
+          {
+            "id": 302,
+            "name": "Xiao long bao",
+            "description": "Pierożki z wieprzowiną i gorącym bulionem w środku.",
+            "price": 26.0,
+            "imageUrl": "https://images.unsplash.com/photo-1518983546435-91f8b87fe561",
+            "isAvailable": false
+          }
+        ]
+      },
+      {
+        "name": "Dania główne",
+        "products": [
+          {
+            "id": 311,
+            "name": "Kurczak w sosie słodko-kwaśnym",
+            "description": "Chrupiący kurczak z ananasem, papryką i sosem słodko-kwaśnym.",
+            "price": 34.0,
+            "imageUrl": "https://images.unsplash.com/photo-1525755662778-989d0524087e",
+            "isAvailable": true
+          },
+          {
+            "id": 312,
+            "name": "Chow mein",
+            "description": "Smażony makaron pszenny z warzywami i sosem sojowym.",
+            "price": 29.0,
+            "imageUrl": "https://images.unsplash.com/photo-1585032226651-759b368d7246",
+            "isAvailable": true
+          },
+          {
+            "id": 313,
+            "name": "Ryż smażony z jajkiem",
+            "description": "Ryż jaśminowy smażony z jajkiem, groszkiem i dymką.",
+            "price": 24.0,
+            "imageUrl": "https://images.unsplash.com/photo-1603133872878-684f208fb84b",
+            "isAvailable": true
+          },
+          {
+            "id": 314,
+            "name": "Makaron z krewetkami",
+            "description": "Makaron ryżowy z krewetkami, pak choi i sosem ostrygowym.",
+            "price": 38.0,
+            "imageUrl": "https://images.unsplash.com/photo-1512058564366-18510be2db19",
+            "isAvailable": true
+          },
+          {
+            "id": 315,
+            "name": "Klopsiki „lwia głowa”",
+            "description": "Duże klopsiki wieprzowe duszone w sosie sojowym.",
+            "price": 36.0,
+            "imageUrl": "https://images.unsplash.com/photo-1529042410759-befb1204b468",
+            "isAvailable": false
+          }
+        ]
+      },
+      {
+        "name": "Napoje",
+        "products": [
+          {
+            "id": 321,
+            "name": "Herbata mrożona",
+            "description": "Czarna herbata z cytryną i lodem.",
+            "price": 8.0,
+            "imageUrl": "https://images.unsplash.com/photo-1556679343-c7306c1976bc",
+            "isAvailable": true
+          },
+          {
+            "id": 322,
+            "name": "Coca-Cola 0,33 l",
+            "description": "Schłodzony napój gazowany w puszce.",
+            "price": 7.0,
+            "imageUrl": "https://images.unsplash.com/photo-1554866585-cd94860890b7",
+            "isAvailable": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "cuisine": "thai",
+    "categories": [
+      {
+        "name": "Zupy",
+        "products": [
+          {
+            "id": 401,
+            "name": "Tom Yum",
+            "description": "Ostra i kwaśna zupa z krewetkami, trawą cytrynową i limonką kaffir.",
+            "price": 27.0,
+            "imageUrl": "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd",
+            "isAvailable": true
+          },
+          {
+            "id": 402,
+            "name": "Tom Kha Gai",
+            "description": "Zupa z mleczkiem kokosowym, kurczakiem i galangalem.",
+            "price": 26.0,
+            "imageUrl": "https://images.unsplash.com/photo-1548943487-a2e4e43b4853",
+            "isAvailable": true
+          }
+        ]
+      },
+      {
+        "name": "Makarony",
+        "products": [
+          {
+            "id": 411,
+            "name": "Pad Thai",
+            "description": "Makaron ryżowy z kurczakiem, jajkiem, kiełkami i orzeszkami ziemnymi.",
+            "price": 33.0,
+            "imageUrl": "https://images.unsplash.com/photo-1559314809-0d155014e29e",
+            "isAvailable": true
+          },
+          {
+            "id": 412,
+            "name": "Khao Soi",
+            "description": "Makaron jajeczny w kremowym curry z kurczakiem i jajkiem.",
+            "price": 35.0,
+            "imageUrl": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624",
+            "isAvailable": false
+          }
+        ]
+      },
+      {
+        "name": "Curry",
+        "products": [
+          {
+            "id": 421,
+            "name": "Żółte curry z kurczakiem",
+            "description": "Łagodne curry z ziemniakami i mleczkiem kokosowym, podawane z ryżem.",
+            "price": 34.0,
+            "imageUrl": "https://images.unsplash.com/photo-1588166524941-3bf61a9c41db",
+            "isAvailable": true
+          },
+          {
+            "id": 422,
+            "name": "Tofu z warzywami",
+            "description": "Smażone tofu z papryką i bazylią tajską w sosie czosnkowym.",
+            "price": 29.0,
+            "imageUrl": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d",
+            "isAvailable": true
+          }
+        ]
+      },
+      {
+        "name": "Napoje",
+        "products": [
+          {
+            "id": 431,
+            "name": "Sok pomarańczowy",
+            "description": "Świeżo wyciskany sok z pomarańczy.",
+            "price": 12.0,
+            "imageUrl": "https://images.unsplash.com/photo-1600271886742-f049cd451bba",
+            "isAvailable": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "cuisine": "polish",
+    "categories": [
+      {
+        "name": "Zupy",
+        "products": [
+          {
+            "id": 501,
+            "name": "Zupa pomidorowa",
+            "description": "Na domowym rosole, z makaronem i śmietaną.",
+            "price": 16.0,
+            "imageUrl": "https://images.unsplash.com/photo-1547592166-23ac45744acd",
+            "isAvailable": true
+          }
+        ]
+      },
+      {
+        "name": "Pierogi",
+        "products": [
+          {
+            "id": 511,
+            "name": "Pierogi ruskie",
+            "description": "8 sztuk z ziemniakami i twarogiem, okraszone cebulką.",
+            "price": 26.0,
+            "imageUrl": "https://images.unsplash.com/photo-1496116218417-1a781b1c416c",
+            "isAvailable": true
+          },
+          {
+            "id": 512,
+            "name": "Pierogi z mięsem",
+            "description": "8 sztuk z wieprzowo-wołowym farszem, podawane ze skwarkami.",
+            "price": 28.0,
+            "imageUrl": "https://images.unsplash.com/photo-1496116218417-1a781b1c416c",
+            "isAvailable": false
+          }
+        ]
+      },
+      {
+        "name": "Dania główne",
+        "products": [
+          {
+            "id": 521,
+            "name": "Kotlet schabowy",
+            "description": "Schabowy z frytkami i surówką z kapusty.",
+            "price": 39.0,
+            "imageUrl": "https://images.unsplash.com/photo-1600891964092-4316c288032e",
+            "isAvailable": true
+          },
+          {
+            "id": 522,
+            "name": "Jajecznica na boczku",
+            "description": "Jajecznica z 3 jaj na boczku, podawana z pieczywem.",
+            "price": 22.0,
+            "imageUrl": "https://images.unsplash.com/photo-1606851094291-6efae152bb87",
+            "isAvailable": true
+          }
+        ]
+      },
+      {
+        "name": "Desery",
+        "products": [
+          {
+            "id": 531,
+            "name": "Naleśniki z syropem",
+            "description": "3 naleśniki z syropem klonowym i owocami.",
+            "price": 19.0,
+            "imageUrl": "https://images.unsplash.com/photo-1551024506-0bccd828d307",
+            "isAvailable": true
+          },
+          {
+            "id": 532,
+            "name": "Deser lodowy",
+            "description": "Lody waniliowe z bitą śmietaną, sosem karmelowym i orzechami.",
+            "price": 18.0,
+            "imageUrl": "https://images.unsplash.com/photo-1563805042-7684c019e1cb",
+            "isAvailable": true
+          }
+        ]
+      }
+    ]
+  }
+]

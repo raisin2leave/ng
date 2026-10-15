@@ -6,6 +6,7 @@ const testRestaurant: Restaurant = {
   id: 1,
   name: 'Test Pizza',
   description: 'Test description',
+  address: 'ul. Testowa 1, 00-001 Warszawa',
   cuisine: CuisineType.Italian,
   rating: 4.5,
   deliveryTimeMin: 20,

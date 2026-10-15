@@ -10,6 +10,7 @@ export type Restaurant = {
   id: number;
   name: string;
   description: string;
+  address: string;
   cuisine: CuisineType;
   imageUrl?: string;
   rating: number;
