@@ -54,3 +54,18 @@
 .unavailable {
   color: red;
 }
+
+.add-button {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.unavailable-card {
+  background: #f1f1f1;
+  border-style: dashed;
+}
+
+.unavailable-card img {
+  filter: grayscale(100%);
+  opacity: 0.6;
+}

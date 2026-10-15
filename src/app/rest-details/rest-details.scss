@@ -79,3 +79,11 @@
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 16px;
 }
+
+.cart-summary {
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #e7f1ff;
+  font-weight: bold;
+}

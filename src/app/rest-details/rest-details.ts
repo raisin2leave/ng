@@ -1,8 +1,8 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProductCard } from '../product-card/product-card';
 import { Restaurant } from '../models/restaurant';
-import { Menu } from '../models/menu';
+import { Menu, Product } from '../models/menu';
 import restaurantsData from '../data/restaurants.json';
 import menusData from '../data/menus.json';
 
@@ -45,4 +45,21 @@ export class RestDetails {
 
     return undefined;
   });
+
+  cart = signal<Product[]>([]);
+
+  cartTotal = computed(() => {
+    let total = 0;
+
+    for (const product of this.cart()) {
+      total = total + product.price;
+    }
+
+    return total;
+  });
+
+  addToCart(product: Product) {
+    const currentCart = this.cart();
+    this.cart.set([...currentCart, product]);
+  }
 }

@@ -1,4 +1,4 @@
-<article class="product-card">
+<article class="product-card" [class.unavailable-card]="!product().isAvailable">
 
   <img
     [src]="product().imageUrl + '?w=400'"
@@ -20,6 +20,15 @@
         <span class="availability unavailable">Niedostępny</span>
       }
     </div>
+
+    <button
+      type="button"
+      class="btn btn-primary btn-sm add-button"
+      [disabled]="!product().isAvailable"
+      (click)="onAddToCartClick()"
+    >
+      Dodaj do koszyka
+    </button>
   </div>
 
 </article>

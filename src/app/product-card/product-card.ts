@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { Product } from '../models/menu';
 
 @Component({
@@ -9,4 +9,14 @@ import { Product } from '../models/menu';
 })
 export class ProductCard {
   product = input.required<Product>();
+
+  addToCart = output<Product>();
+
+  onAddToCartClick() {
+    if (!this.product().isAvailable) {
+      return;
+    }
+
+    this.addToCart.emit(this.product());
+  }
 }

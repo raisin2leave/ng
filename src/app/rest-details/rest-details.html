@@ -31,6 +31,14 @@
       <li><strong>Min. zamówienie:</strong> {{ restaurant.minimumOrderValue }} zł</li>
     </ul>
 
+    <div class="cart-summary" aria-live="polite">
+      @if (cart().length === 0) {
+        Koszyk jest pusty
+      } @else {
+        🛒 Koszyk: {{ cart().length }} szt. • {{ cartTotal().toFixed(2) }} zł
+      }
+    </div>
+
     <h2 class="menu-title">Menu</h2>
 
     @if (menu(); as menu) {
@@ -40,7 +48,7 @@
 
           <div class="product-grid">
             @for (product of category.products; track product.id) {
-              <app-product-card [product]="product" />
+              <app-product-card [product]="product" (addToCart)="addToCart($event)" />
             }
           </div>
         </section>
