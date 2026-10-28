@@ -23,6 +23,14 @@ export class AdminList {
     return cuisine;
   }
 
+  deactivate(id: number) {
+    this.restaurantsService.setActive(id, false);
+  }
+
+  activate(id: number) {
+    this.restaurantsService.setActive(id, true);
+  }
+
   resetData() {
     if (confirm('Usunąć wszystkie zmiany i przywrócić oryginalne dane?')) {
       this.restaurantsService.resetToOriginal();

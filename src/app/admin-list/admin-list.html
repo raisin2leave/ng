@@ -24,7 +24,7 @@
     </thead>
     <tbody>
       @for (restaurant of restaurants(); track restaurant.id) {
-        <tr>
+        <tr [class.inactive-row]="!restaurant.isActive">
           <td>{{ restaurant.name }}</td>
           <td>{{ cuisineLabel(restaurant.cuisine) }}</td>
           <td>
@@ -48,6 +48,15 @@
             <a class="btn btn-sm btn-outline-secondary" [routerLink]="['/restaurant', restaurant.id]">
               Podgląd
             </a>
+            @if (restaurant.isActive) {
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="deactivate(restaurant.id)">
+                Dezaktywuj
+              </button>
+            } @else {
+              <button type="button" class="btn btn-sm btn-outline-success" (click)="activate(restaurant.id)">
+                Aktywuj
+              </button>
+            }
           </td>
         </tr>
       }

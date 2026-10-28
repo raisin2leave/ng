@@ -68,4 +68,19 @@ describe('Restaurants service', () => {
     expect(service.getById(1)!.name).toBe('Pierogarnia Pod Aniołami');
     expect(service.getAll()().length).toBe(200);
   });
+
+  it('should deactivate a restaurant, keep all its data, and save it', () => {
+    const service = TestBed.inject(Restaurants);
+    const before = service.getById(3)!;
+
+    service.setActive(3, false);
+
+    const after = service.getById(3)!;
+    expect(after.isActive).toBe(false);
+    expect({ ...after, isActive: true }).toEqual({ ...before, isActive: true });
+    expect(service.getAll()().length).toBe(200);
+
+    const saved = JSON.parse(localStorage.getItem('foodapp-restaurants')!);
+    expect(saved.find((r: { id: number }) => r.id === 3).isActive).toBe(false);
+  });
 });

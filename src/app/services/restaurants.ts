@@ -47,6 +47,20 @@ export class Restaurants {
     this.saveAll(updatedList);
   }
 
+  setActive(id: number, isActive: boolean) {
+    const updatedList: Restaurant[] = [];
+
+    for (const restaurant of this.restaurants()) {
+      if (restaurant.id === id) {
+        updatedList.push({ ...restaurant, isActive: isActive });
+      } else {
+        updatedList.push(restaurant);
+      }
+    }
+
+    this.saveAll(updatedList);
+  }
+
   resetToOriginal() {
     localStorage.removeItem(STORAGE_KEY);
     this.restaurants.set(restaurantsData as Restaurant[]);
