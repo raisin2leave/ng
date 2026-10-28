@@ -1,9 +1,8 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProductCard } from '../product-card/product-card';
-import { Restaurant } from '../models/restaurant';
 import { Menu, Product } from '../models/menu';
-import restaurantsData from '../data/restaurants.json';
+import { Restaurants } from '../services/restaurants';
 import menusData from '../data/menus.json';
 
 @Component({
@@ -15,19 +14,12 @@ import menusData from '../data/menus.json';
 export class RestDetails {
   id = input.required<string>();
 
-  allRestaurants: Restaurant[] = restaurantsData as Restaurant[];
+  private restaurantsService = inject(Restaurants);
   allMenus: Menu[] = menusData as Menu[];
 
   restaurant = computed(() => {
     const id = Number(this.id());
-
-    for (const restaurant of this.allRestaurants) {
-      if (restaurant.id === id) {
-        return restaurant;
-      }
-    }
-
-    return undefined;
+    return this.restaurantsService.getById(id);
   });
 
   menu = computed(() => {

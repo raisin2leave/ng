@@ -1,8 +1,8 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RestCard } from '../rest-card/rest-card';
 import { CuisineType, Restaurant } from '../models/restaurant';
-import restaurantsData from '../data/restaurants.json';
+import { Restaurants } from '../services/restaurants';
 
 @Component({
   selector: 'app-rest-list',
@@ -11,7 +11,8 @@ import restaurantsData from '../data/restaurants.json';
   styleUrl: './rest-list.scss',
 })
 export class RestList {
-  allRestaurants: Restaurant[] = restaurantsData as Restaurant[];
+  private restaurantsService = inject(Restaurants);
+  allRestaurants = this.restaurantsService.getAll();
 
   cuisineOptions = [
     { value: CuisineType.American, label: 'Amerykańska' },
@@ -33,7 +34,7 @@ export class RestList {
     const sortBy = this.sortBy();
     const result: Restaurant[] = [];
 
-    for (const restaurant of this.allRestaurants) {
+    for (const restaurant of this.allRestaurants()) {
       const name = restaurant.name.toLowerCase();
 
       if (!name.includes(search)) {
