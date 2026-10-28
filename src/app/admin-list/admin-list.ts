@@ -22,4 +22,10 @@ export class AdminList {
 
     return cuisine;
   }
+
+  resetData() {
+    if (confirm('Usunąć wszystkie zmiany i przywrócić oryginalne dane?')) {
+      this.restaurantsService.resetToOriginal();
+    }
+  }
 }

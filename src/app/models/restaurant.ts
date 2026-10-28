@@ -28,3 +28,16 @@ export type Restaurant = {
   minimumOrderValue: number;
   isActive: boolean;
 };
+
+export type RestaurantFormValue = {
+  name: string;
+  description: string;
+  address: string;
+  cuisine: CuisineType;
+  imageUrl: string;
+  deliveryTimeMin: number;
+  deliveryTimeMax: number;
+  deliveryFee: number;
+  minimumOrderValue: number;
+  isActive: boolean;
+};

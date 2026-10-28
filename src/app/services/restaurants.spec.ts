@@ -16,4 +16,30 @@ describe('Restaurants service', () => {
     expect(service.getById(1)?.name).toBe('Pierogarnia Pod Aniołami');
     expect(service.getById(9999)).toBeUndefined();
   });
+
+  it('should create a restaurant, save it to localStorage and reset back', () => {
+    const service = TestBed.inject(Restaurants);
+    const created = service.create({
+      name: 'Testowa',
+      description: 'Opis testowej restauracji',
+      address: 'ul. Testowa 1, 00-001 Warszawa',
+      cuisine: service.getById(1)!.cuisine,
+      imageUrl: '',
+      deliveryTimeMin: 10,
+      deliveryTimeMax: 20,
+      deliveryFee: 5,
+      minimumOrderValue: 30,
+      isActive: true,
+    });
+
+    expect(created.id).toBe(201);
+    expect(service.getAll()().length).toBe(201);
+
+    const saved = JSON.parse(localStorage.getItem('foodapp-restaurants')!);
+    expect(saved.length).toBe(201);
+
+    service.resetToOriginal();
+    expect(service.getAll()().length).toBe(200);
+    expect(localStorage.getItem('foodapp-restaurants')).toBeNull();
+  });
 });

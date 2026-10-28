@@ -2,11 +2,13 @@
   <a routerLink="/" class="back-link">← Wróć do listy restauracji</a>
 
   @if (restaurant(); as restaurant) {
-    <img
-      class="details-image"
-      [src]="restaurant.imageUrl + '?w=1200'"
-      [alt]="restaurant.name"
-    >
+    @if (restaurant.imageUrl) {
+      <img
+        class="details-image"
+        [src]="restaurant.imageUrl + '?w=1200'"
+        [alt]="restaurant.name"
+      >
+    }
 
     <div class="details-header">
       <h1>{{ restaurant.name }}</h1>
@@ -22,7 +24,14 @@
 
     <ul class="info">
       <li><strong>Adres:</strong> {{ restaurant.address }}</li>
-      <li><strong>Rating:</strong> ⭐ {{ restaurant.rating }}</li>
+      <li>
+        <strong>Rating:</strong>
+        @if (restaurant.rating > 0) {
+          ⭐ {{ restaurant.rating }}
+        } @else {
+          brak ocen
+        }
+      </li>
       <li>
         <strong>Czas dostawy:</strong>
         {{ restaurant.deliveryTimeMin }}–{{ restaurant.deliveryTimeMax }} min

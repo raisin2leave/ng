@@ -1,10 +1,14 @@
 <a class="restaurant-card" [routerLink]="['/restaurant', restaurant().id]">
 
-  <img
-    [src]="restaurant().imageUrl + '?w=600'"
-    [alt]="restaurant().name"
-    loading="lazy"
-  >
+  @if (restaurant().imageUrl) {
+    <img
+      [src]="restaurant().imageUrl + '?w=600'"
+      [alt]="restaurant().name"
+      loading="lazy"
+    >
+  } @else {
+    <div class="no-image">Brak zdjęcia</div>
+  }
 
   <div class="restaurant-info">
 
@@ -22,7 +26,14 @@
 
     <p><strong>Cuisine:</strong> {{ restaurant().cuisine }}</p>
 
-    <p><strong>Rating:</strong> ⭐ {{ restaurant().rating }}</p>
+    <p>
+      <strong>Rating:</strong>
+      @if (restaurant().rating > 0) {
+        ⭐ {{ restaurant().rating }}
+      } @else {
+        brak ocen
+      }
+    </p>
 
     <p>
       <strong>Delivery time:</strong>

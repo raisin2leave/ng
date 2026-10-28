@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Restaurant } from '../models/restaurant';
+import { Restaurant, RestaurantFormValue } from '../models/restaurant';
 import restaurantsData from '../data/restaurants.json';
 
 const STORAGE_KEY = 'foodapp-restaurants';
@@ -20,6 +20,39 @@ export class Restaurants {
     }
 
     return undefined;
+  }
+
+  create(data: RestaurantFormValue) {
+    const newRestaurant: Restaurant = {
+      ...data,
+      id: this.nextId(),
+      rating: 0,
+    };
+
+    this.saveAll([...this.restaurants(), newRestaurant]);
+    return newRestaurant;
+  }
+
+  resetToOriginal() {
+    localStorage.removeItem(STORAGE_KEY);
+    this.restaurants.set(restaurantsData as Restaurant[]);
+  }
+
+  private nextId() {
+    let highestId = 0;
+
+    for (const restaurant of this.restaurants()) {
+      if (restaurant.id > highestId) {
+        highestId = restaurant.id;
+      }
+    }
+
+    return highestId + 1;
+  }
+
+  private saveAll(restaurants: Restaurant[]) {
+    this.restaurants.set(restaurants);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(restaurants));
   }
 
   private loadFromStorage(): Restaurant[] {

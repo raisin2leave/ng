@@ -21,6 +21,15 @@
   object-fit: cover;
 }
 
+.no-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 180px;
+  background: #e9ecef;
+  color: #6c757d;
+}
+
 .restaurant-info {
   padding: 15px;
 }
