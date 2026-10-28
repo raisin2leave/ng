@@ -39,6 +39,10 @@ describe('RestaurantForm', () => {
     name.value = 'Nowa Pizzeria';
     name.dispatchEvent(new Event('input'));
 
+    const description = page.querySelector<HTMLTextAreaElement>('#description')!;
+    description.value = 'Pizza z pieca opalanego drewnem.';
+    description.dispatchEvent(new Event('input'));
+
     const fee = page.querySelector<HTMLInputElement>('#deliveryFee')!;
     fee.value = '7.5';
     fee.dispatchEvent(new Event('input'));
@@ -84,5 +88,85 @@ describe('RestaurantForm', () => {
     const page: HTMLElement = fixture.nativeElement;
     expect(page.textContent).toContain('Nie znaleziono restauracji.');
     expect(page.querySelector('form')).toBeNull();
+  });
+
+  describe('validation (FR-05)', () => {
+    function typeInto(page: HTMLElement, selector: string, value: string) {
+      const field = page.querySelector<HTMLInputElement | HTMLTextAreaElement>(selector)!;
+      field.value = value;
+      field.dispatchEvent(new Event('input'));
+    }
+
+    function errorTexts(page: HTMLElement) {
+      return [...page.querySelectorAll('.invalid-feedback')].map((e) => e.textContent?.trim());
+    }
+
+    it('should not save an empty form and should show what is wrong', () => {
+      const fixture = TestBed.createComponent(RestaurantForm);
+      fixture.detectChanges();
+      const page: HTMLElement = fixture.nativeElement;
+
+      expect(errorTexts(page)).toEqual([]);
+
+      page.querySelector('form')!.dispatchEvent(new Event('submit'));
+      fixture.detectChanges();
+
+      expect(TestBed.inject(Restaurants).getAll()().length).toBe(200);
+      expect(errorTexts(page)).toContain('Nazwa jest wymagana.');
+      expect(errorTexts(page)).toContain('Opis jest wymagany.');
+      expect(page.textContent).toContain('Popraw błędy w formularzu, aby zapisać.');
+      expect(page.querySelector('#name')!.classList).toContain('is-invalid');
+    });
+
+    it('should check name and description length', () => {
+      const fixture = TestBed.createComponent(RestaurantForm);
+      fixture.detectChanges();
+      const page: HTMLElement = fixture.nativeElement;
+
+      typeInto(page, '#name', 'AB');
+      typeInto(page, '#description', 'Za krótki');
+      page.querySelector('form')!.dispatchEvent(new Event('submit'));
+      fixture.detectChanges();
+
+      expect(errorTexts(page)).toContain('Nazwa musi mieć co najmniej 3 znaki.');
+      expect(errorTexts(page)).toContain('Opis musi mieć co najmniej 20 znaków.');
+    });
+
+    it('should check delivery fee, minimum order value and delivery times', () => {
+      const fixture = TestBed.createComponent(RestaurantForm);
+      fixture.detectChanges();
+      const page: HTMLElement = fixture.nativeElement;
+
+      typeInto(page, '#name', 'Poprawna nazwa');
+      typeInto(page, '#description', 'Poprawny opis restauracji testowej.');
+      typeInto(page, '#deliveryFee', '-5');
+      typeInto(page, '#minimumOrderValue', '');
+      typeInto(page, '#deliveryTimeMin', '40');
+      typeInto(page, '#deliveryTimeMax', '20');
+      page.querySelector('form')!.dispatchEvent(new Event('submit'));
+      fixture.detectChanges();
+
+      expect(TestBed.inject(Restaurants).getAll()().length).toBe(200);
+      expect(errorTexts(page)).toEqual([
+        'Czas „do” nie może być krótszy niż czas „od”.',
+        'Koszt dostawy nie może być ujemny.',
+        'Podaj minimalną wartość zamówienia.',
+      ]);
+    });
+
+    it('should allow a delivery fee of 0 (free delivery)', () => {
+      const fixture = TestBed.createComponent(RestaurantForm);
+      fixture.detectChanges();
+      const page: HTMLElement = fixture.nativeElement;
+
+      typeInto(page, '#name', 'Darmowa dostawa');
+      typeInto(page, '#description', 'Restauracja z darmową dostawą do domu.');
+      typeInto(page, '#deliveryFee', '0');
+      page.querySelector('form')!.dispatchEvent(new Event('submit'));
+
+      const all = TestBed.inject(Restaurants).getAll()();
+      expect(all.length).toBe(201);
+      expect(all[200].deliveryFee).toBe(0);
+    });
   });
 });

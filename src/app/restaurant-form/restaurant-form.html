@@ -13,13 +13,35 @@
     <form class="row g-3" (submit)="save($event)" novalidate>
 
       <div class="col-12">
-        <label for="name" class="form-label">Nazwa</label>
-        <input id="name" type="text" class="form-control" [formField]="restaurantForm.name">
+        <label for="name" class="form-label">Nazwa *</label>
+        <input
+          id="name"
+          type="text"
+          class="form-control"
+          [class.is-invalid]="showErrors(restaurantForm.name())"
+          [formField]="restaurantForm.name"
+        >
+        @if (showErrors(restaurantForm.name())) {
+          @for (error of restaurantForm.name().errors(); track error.kind) {
+            <div class="invalid-feedback">{{ error.message }}</div>
+          }
+        }
       </div>
 
       <div class="col-12">
-        <label for="description" class="form-label">Opis</label>
-        <textarea id="description" class="form-control" rows="3" [formField]="restaurantForm.description"></textarea>
+        <label for="description" class="form-label">Opis *</label>
+        <textarea
+          id="description"
+          class="form-control"
+          rows="3"
+          [class.is-invalid]="showErrors(restaurantForm.description())"
+          [formField]="restaurantForm.description"
+        ></textarea>
+        @if (showErrors(restaurantForm.description())) {
+          @for (error of restaurantForm.description().errors(); track error.kind) {
+            <div class="invalid-feedback">{{ error.message }}</div>
+          }
+        }
       </div>
 
       <div class="col-md-6">
@@ -48,23 +70,69 @@
       </div>
 
       <div class="col-md-3">
-        <label for="deliveryTimeMin" class="form-label">Czas dostawy od (min)</label>
-        <input id="deliveryTimeMin" type="number" class="form-control" [formField]="restaurantForm.deliveryTimeMin">
+        <label for="deliveryTimeMin" class="form-label">Czas dostawy od (min) *</label>
+        <input
+          id="deliveryTimeMin"
+          type="number"
+          class="form-control"
+          [class.is-invalid]="showErrors(restaurantForm.deliveryTimeMin())"
+          [formField]="restaurantForm.deliveryTimeMin"
+        >
+        @if (showErrors(restaurantForm.deliveryTimeMin())) {
+          @for (error of restaurantForm.deliveryTimeMin().errors(); track error.kind) {
+            <div class="invalid-feedback">{{ error.message }}</div>
+          }
+        }
       </div>
 
       <div class="col-md-3">
-        <label for="deliveryTimeMax" class="form-label">Czas dostawy do (min)</label>
-        <input id="deliveryTimeMax" type="number" class="form-control" [formField]="restaurantForm.deliveryTimeMax">
+        <label for="deliveryTimeMax" class="form-label">Czas dostawy do (min) *</label>
+        <input
+          id="deliveryTimeMax"
+          type="number"
+          class="form-control"
+          [class.is-invalid]="showErrors(restaurantForm.deliveryTimeMax())"
+          [formField]="restaurantForm.deliveryTimeMax"
+        >
+        @if (showErrors(restaurantForm.deliveryTimeMax())) {
+          @for (error of restaurantForm.deliveryTimeMax().errors(); track error.kind) {
+            <div class="invalid-feedback">{{ error.message }}</div>
+          }
+        }
       </div>
 
       <div class="col-md-3">
-        <label for="deliveryFee" class="form-label">Koszt dostawy (zł)</label>
-        <input id="deliveryFee" type="number" step="0.01" class="form-control" [formField]="restaurantForm.deliveryFee">
+        <label for="deliveryFee" class="form-label">Koszt dostawy (zł) *</label>
+        <input
+          id="deliveryFee"
+          type="number"
+          step="0.01"
+          class="form-control"
+          [class.is-invalid]="showErrors(restaurantForm.deliveryFee())"
+          [formField]="restaurantForm.deliveryFee"
+        >
+        @if (showErrors(restaurantForm.deliveryFee())) {
+          @for (error of restaurantForm.deliveryFee().errors(); track error.kind) {
+            <div class="invalid-feedback">{{ error.message }}</div>
+          }
+        }
       </div>
 
       <div class="col-md-3">
-        <label for="minimumOrderValue" class="form-label">Min. zamówienie (zł)</label>
-        <input id="minimumOrderValue" type="number" step="0.01" class="form-control" [formField]="restaurantForm.minimumOrderValue">
+        <label for="minimumOrderValue" class="form-label">Min. zamówienie (zł) *</label>
+        <input
+          id="minimumOrderValue"
+          type="number"
+          step="0.01"
+          class="form-control"
+          [class.is-invalid]="showErrors(restaurantForm.minimumOrderValue())"
+          [formField]="restaurantForm.minimumOrderValue"
+        >
+        @if (showErrors(restaurantForm.minimumOrderValue())) {
+          @for (error of restaurantForm.minimumOrderValue().errors(); track error.kind) {
+            <div class="invalid-feedback">{{ error.message }}</div>
+          }
+        }
       </div>
 
       <div class="col-12">
@@ -75,8 +143,12 @@
       </div>
 
       <div class="col-12">
+        @if (triedToSave() && restaurantForm().invalid()) {
+          <p class="text-danger" role="alert">Popraw błędy w formularzu, aby zapisać.</p>
+        }
         <button type="submit" class="btn btn-primary">Zapisz</button>
         <a routerLink="/admin" class="btn btn-outline-secondary ms-2">Anuluj</a>
+        <p class="hint">* pole wymagane</p>
       </div>
 
     </form>
