@@ -6,6 +6,14 @@ export enum CuisineType {
   American = 'american',
 }
 
+export const cuisineOptions = [
+  { value: CuisineType.American, label: 'Amerykańska' },
+  { value: CuisineType.Italian, label: 'Włoska' },
+  { value: CuisineType.Chinese, label: 'Chińska' },
+  { value: CuisineType.Thai, label: 'Tajska' },
+  { value: CuisineType.Polish, label: 'Polska' },
+];
+
 export type Restaurant = {
   id: number;
   name: string;

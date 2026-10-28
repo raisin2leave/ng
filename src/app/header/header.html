@@ -1,1 +1,10 @@
-<p>FoodApp</p>
+<header class="header">
+  <a routerLink="/" class="brand">FoodApp</a>
+
+  <nav class="nav-links">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      Restauracje
+    </a>
+    <a routerLink="/admin" routerLinkActive="active">Panel admina</a>
+  </nav>
+</header>

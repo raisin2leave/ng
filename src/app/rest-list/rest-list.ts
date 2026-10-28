@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RestCard } from '../rest-card/rest-card';
-import { CuisineType, Restaurant } from '../models/restaurant';
+import { cuisineOptions, Restaurant } from '../models/restaurant';
 import { Restaurants } from '../services/restaurants';
 
 @Component({
@@ -14,13 +14,7 @@ export class RestList {
   private restaurantsService = inject(Restaurants);
   allRestaurants = this.restaurantsService.getAll();
 
-  cuisineOptions = [
-    { value: CuisineType.American, label: 'Amerykańska' },
-    { value: CuisineType.Italian, label: 'Włoska' },
-    { value: CuisineType.Chinese, label: 'Chińska' },
-    { value: CuisineType.Thai, label: 'Tajska' },
-    { value: CuisineType.Polish, label: 'Polska' },
-  ];
+  cuisineOptions = cuisineOptions;
 
   searchText = signal('');
   selectedCuisine = signal('all');
