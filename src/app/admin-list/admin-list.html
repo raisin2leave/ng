@@ -41,7 +41,10 @@
               <span class="badge text-bg-secondary">Nieaktywna</span>
             }
           </td>
-          <td>
+          <td class="actions">
+            <a class="btn btn-sm btn-outline-primary" [routerLink]="['/admin/edit', restaurant.id]">
+              Edytuj
+            </a>
             <a class="btn btn-sm btn-outline-secondary" [routerLink]="['/restaurant', restaurant.id]">
               Podgląd
             </a>

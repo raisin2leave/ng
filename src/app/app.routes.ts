@@ -9,5 +9,6 @@ export const routes: Routes = [
   { path: 'restaurant/:id', component: RestDetails },
   { path: 'admin', component: AdminList },
   { path: 'admin/new', component: RestaurantForm },
+  { path: 'admin/edit/:id', component: RestaurantForm },
   { path: '**', redirectTo: '' },
 ];

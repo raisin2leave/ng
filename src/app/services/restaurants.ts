@@ -33,6 +33,20 @@ export class Restaurants {
     return newRestaurant;
   }
 
+  update(id: number, data: RestaurantFormValue) {
+    const updatedList: Restaurant[] = [];
+
+    for (const restaurant of this.restaurants()) {
+      if (restaurant.id === id) {
+        updatedList.push({ ...restaurant, ...data });
+      } else {
+        updatedList.push(restaurant);
+      }
+    }
+
+    this.saveAll(updatedList);
+  }
+
   resetToOriginal() {
     localStorage.removeItem(STORAGE_KEY);
     this.restaurants.set(restaurantsData as Restaurant[]);

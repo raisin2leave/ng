@@ -42,4 +42,30 @@ describe('Restaurants service', () => {
     expect(service.getAll()().length).toBe(200);
     expect(localStorage.getItem('foodapp-restaurants')).toBeNull();
   });
+
+  it('should update only the chosen restaurant and keep its id and rating', () => {
+    const service = TestBed.inject(Restaurants);
+    const before = service.getById(2)!;
+
+    service.update(2, {
+      name: 'Nowa nazwa',
+      description: before.description,
+      address: before.address,
+      cuisine: before.cuisine,
+      imageUrl: before.imageUrl ?? '',
+      deliveryTimeMin: before.deliveryTimeMin,
+      deliveryTimeMax: before.deliveryTimeMax,
+      deliveryFee: 1,
+      minimumOrderValue: before.minimumOrderValue,
+      isActive: before.isActive,
+    });
+
+    const after = service.getById(2)!;
+    expect(after.name).toBe('Nowa nazwa');
+    expect(after.deliveryFee).toBe(1);
+    expect(after.id).toBe(2);
+    expect(after.rating).toBe(before.rating);
+    expect(service.getById(1)!.name).toBe('Pierogarnia Pod Aniołami');
+    expect(service.getAll()().length).toBe(200);
+  });
 });

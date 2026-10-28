@@ -1,76 +1,84 @@
 <div class="form-page">
   <a routerLink="/admin" class="back-link">← Wróć do panelu administratora</a>
 
-  <h1>Nowa restauracja</h1>
+  @if (notFound()) {
+    <p class="not-found">Nie znaleziono restauracji.</p>
+  } @else {
+    @if (id() === undefined) {
+      <h1>Nowa restauracja</h1>
+    } @else {
+      <h1>Edytuj restaurację</h1>
+    }
 
-  <form class="row g-3" (submit)="save($event)" novalidate>
+    <form class="row g-3" (submit)="save($event)" novalidate>
 
-    <div class="col-12">
-      <label for="name" class="form-label">Nazwa</label>
-      <input id="name" type="text" class="form-control" [formField]="restaurantForm.name">
-    </div>
-
-    <div class="col-12">
-      <label for="description" class="form-label">Opis</label>
-      <textarea id="description" class="form-control" rows="3" [formField]="restaurantForm.description"></textarea>
-    </div>
-
-    <div class="col-md-6">
-      <label for="cuisine" class="form-label">Rodzaj kuchni</label>
-      <select id="cuisine" class="form-select" [formField]="restaurantForm.cuisine">
-        @for (option of cuisineOptions; track option.value) {
-          <option [value]="option.value">{{ option.label }}</option>
-        }
-      </select>
-    </div>
-
-    <div class="col-md-6">
-      <label for="address" class="form-label">Adres</label>
-      <input id="address" type="text" class="form-control" [formField]="restaurantForm.address">
-    </div>
-
-    <div class="col-12">
-      <label for="imageUrl" class="form-label">Zdjęcie (adres URL)</label>
-      <input
-        id="imageUrl"
-        type="url"
-        class="form-control"
-        placeholder="https://images.unsplash.com/..."
-        [formField]="restaurantForm.imageUrl"
-      >
-    </div>
-
-    <div class="col-md-3">
-      <label for="deliveryTimeMin" class="form-label">Czas dostawy od (min)</label>
-      <input id="deliveryTimeMin" type="number" class="form-control" [formField]="restaurantForm.deliveryTimeMin">
-    </div>
-
-    <div class="col-md-3">
-      <label for="deliveryTimeMax" class="form-label">Czas dostawy do (min)</label>
-      <input id="deliveryTimeMax" type="number" class="form-control" [formField]="restaurantForm.deliveryTimeMax">
-    </div>
-
-    <div class="col-md-3">
-      <label for="deliveryFee" class="form-label">Koszt dostawy (zł)</label>
-      <input id="deliveryFee" type="number" step="0.01" class="form-control" [formField]="restaurantForm.deliveryFee">
-    </div>
-
-    <div class="col-md-3">
-      <label for="minimumOrderValue" class="form-label">Min. zamówienie (zł)</label>
-      <input id="minimumOrderValue" type="number" step="0.01" class="form-control" [formField]="restaurantForm.minimumOrderValue">
-    </div>
-
-    <div class="col-12">
-      <div class="form-check">
-        <input id="isActive" type="checkbox" class="form-check-input" [formField]="restaurantForm.isActive">
-        <label for="isActive" class="form-check-label">Restauracja aktywna</label>
+      <div class="col-12">
+        <label for="name" class="form-label">Nazwa</label>
+        <input id="name" type="text" class="form-control" [formField]="restaurantForm.name">
       </div>
-    </div>
 
-    <div class="col-12">
-      <button type="submit" class="btn btn-primary">Zapisz</button>
-      <a routerLink="/admin" class="btn btn-outline-secondary ms-2">Anuluj</a>
-    </div>
+      <div class="col-12">
+        <label for="description" class="form-label">Opis</label>
+        <textarea id="description" class="form-control" rows="3" [formField]="restaurantForm.description"></textarea>
+      </div>
 
-  </form>
+      <div class="col-md-6">
+        <label for="cuisine" class="form-label">Rodzaj kuchni</label>
+        <select id="cuisine" class="form-select" [formField]="restaurantForm.cuisine">
+          @for (option of cuisineOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label for="address" class="form-label">Adres</label>
+        <input id="address" type="text" class="form-control" [formField]="restaurantForm.address">
+      </div>
+
+      <div class="col-12">
+        <label for="imageUrl" class="form-label">Zdjęcie (adres URL)</label>
+        <input
+          id="imageUrl"
+          type="url"
+          class="form-control"
+          placeholder="https://images.unsplash.com/..."
+          [formField]="restaurantForm.imageUrl"
+        >
+      </div>
+
+      <div class="col-md-3">
+        <label for="deliveryTimeMin" class="form-label">Czas dostawy od (min)</label>
+        <input id="deliveryTimeMin" type="number" class="form-control" [formField]="restaurantForm.deliveryTimeMin">
+      </div>
+
+      <div class="col-md-3">
+        <label for="deliveryTimeMax" class="form-label">Czas dostawy do (min)</label>
+        <input id="deliveryTimeMax" type="number" class="form-control" [formField]="restaurantForm.deliveryTimeMax">
+      </div>
+
+      <div class="col-md-3">
+        <label for="deliveryFee" class="form-label">Koszt dostawy (zł)</label>
+        <input id="deliveryFee" type="number" step="0.01" class="form-control" [formField]="restaurantForm.deliveryFee">
+      </div>
+
+      <div class="col-md-3">
+        <label for="minimumOrderValue" class="form-label">Min. zamówienie (zł)</label>
+        <input id="minimumOrderValue" type="number" step="0.01" class="form-control" [formField]="restaurantForm.minimumOrderValue">
+      </div>
+
+      <div class="col-12">
+        <div class="form-check">
+          <input id="isActive" type="checkbox" class="form-check-input" [formField]="restaurantForm.isActive">
+          <label for="isActive" class="form-check-label">Restauracja aktywna</label>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Zapisz</button>
+        <a routerLink="/admin" class="btn btn-outline-secondary ms-2">Anuluj</a>
+      </div>
+
+    </form>
+  }
 </div>

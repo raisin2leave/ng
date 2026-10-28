@@ -13,6 +13,14 @@
   margin-bottom: 16px;
 }
 
+.actions {
+  white-space: nowrap;
+}
+
+.actions .btn + .btn {
+  margin-left: 6px;
+}
+
 .count {
   color: #6c757d;
   margin: 0;
