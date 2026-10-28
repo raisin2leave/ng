@@ -1,0 +1,129 @@
+<div class="admin">
+  <a routerLink="/admin" class="back-link">← Wróć do listy restauracji</a>
+
+  <div class="toolbar">
+    <h1>Zarządzanie menu</h1>
+    <button type="button" class="btn btn-outline-danger" (click)="resetMenus()">
+      Przywróć oryginalne menu
+    </button>
+  </div>
+
+  <nav class="nav nav-pills mb-3" aria-label="Wybór kuchni">
+    @for (option of cuisineOptions; track option.value) {
+      <a class="nav-link" [routerLink]="['/admin/menus', option.value]" routerLinkActive="active">
+        {{ option.label }}
+      </a>
+    }
+  </nav>
+
+  @if (menu(); as menu) {
+    <p class="info">
+      Menu kuchni <strong>{{ cuisineLabel(menu.cuisine) }}</strong> widzi
+      {{ restaurantCount() }} restauracji. Zmiany są widoczne u wszystkich klientów.
+    </p>
+
+    @for (category of menu.categories; track category.name) {
+      <section class="category card mb-3">
+        <div class="card-header category-header">
+          @if (renamingCategory() === category.name) {
+            <form class="rename-form" (submit)="saveRename($event)" novalidate>
+              <label class="visually-hidden" [for]="'rename-' + category.name">Nowa nazwa kategorii</label>
+              <input
+                [id]="'rename-' + category.name"
+                type="text"
+                class="form-control form-control-sm"
+                [class.is-invalid]="renameError() !== ''"
+                [(ngModel)]="renameValue"
+                name="renameValue"
+              >
+              <button type="submit" class="btn btn-sm btn-primary">Zapisz</button>
+              <button type="button" class="btn btn-sm btn-outline-secondary" (click)="cancelRename()">
+                Anuluj
+              </button>
+              @if (renameError()) {
+                <div class="invalid-feedback d-block">{{ renameError() }}</div>
+              }
+            </form>
+          } @else {
+            <h2>{{ category.name }}</h2>
+            <div class="category-actions">
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="startRename(category)">
+                Zmień nazwę
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteCategory(category)">
+                Usuń kategorię
+              </button>
+            </div>
+          }
+        </div>
+
+        <div class="card-body">
+          @if (category.products.length > 0) {
+            <table class="table table-sm align-middle mb-2">
+              <thead>
+                <tr>
+                  <th scope="col">Produkt</th>
+                  <th scope="col">Cena</th>
+                  <th scope="col">Dostępność</th>
+                  <th scope="col">Akcje</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (product of category.products; track product.id) {
+                  <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price.toFixed(2) }} zł</td>
+                    <td>
+                      @if (product.isAvailable) {
+                        <span class="badge text-bg-success">Dostępny</span>
+                      } @else {
+                        <span class="badge text-bg-secondary">Niedostępny</span>
+                      }
+                    </td>
+                    <td class="actions">
+                      <a class="btn btn-sm btn-outline-primary" [routerLink]="['/admin/menus', menu.cuisine, 'edit', product.id]">
+                        Edytuj
+                      </a>
+                      <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteProduct(product)">
+                        Usuń
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          } @else {
+            <p class="empty">Brak produktów w tej kategorii.</p>
+          }
+
+          <a class="btn btn-sm btn-primary" [routerLink]="['/admin/menus', menu.cuisine, 'new', category.name]">
+            + Dodaj produkt
+          </a>
+        </div>
+      </section>
+    } @empty {
+      <p class="empty">To menu nie ma jeszcze żadnych kategorii.</p>
+    }
+
+    <form class="add-category card card-body" (submit)="addCategory($event)" novalidate>
+      <label for="new-category" class="form-label"><strong>Nowa kategoria</strong></label>
+      <div class="add-category-row">
+        <input
+          id="new-category"
+          type="text"
+          class="form-control"
+          placeholder="np. Sałatki"
+          [class.is-invalid]="newCategoryError() !== ''"
+          [(ngModel)]="newCategoryName"
+          name="newCategoryName"
+        >
+        <button type="submit" class="btn btn-primary">+ Dodaj kategorię</button>
+      </div>
+      @if (newCategoryError()) {
+        <div class="invalid-feedback d-block">{{ newCategoryError() }}</div>
+      }
+    </form>
+  } @else {
+    <p class="empty">Nie znaleziono menu dla tej kuchni.</p>
+  }
+</div>

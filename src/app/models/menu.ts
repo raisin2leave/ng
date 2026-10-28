@@ -9,6 +9,14 @@ export type Product = {
   isAvailable: boolean;
 };
 
+export type ProductFormValue = {
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+  isAvailable: boolean;
+};
+
 export type MenuCategory = {
   name: string;
   products: Product[];

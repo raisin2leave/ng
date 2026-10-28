@@ -1,0 +1,69 @@
+.admin {
+  max-width: 960px;
+  margin: 20px auto;
+  padding: 0 30px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toolbar h1 {
+  margin: 0;
+}
+
+.info {
+  color: #6c757d;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.category-header h2 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.category-actions .btn + .btn,
+.actions .btn + .btn {
+  margin-left: 6px;
+}
+
+.actions {
+  white-space: nowrap;
+}
+
+.rename-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.rename-form input {
+  width: auto;
+}
+
+.add-category-row {
+  display: flex;
+  gap: 10px;
+}
+
+.empty {
+  color: #6c757d;
+}
