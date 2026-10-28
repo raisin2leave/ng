@@ -2,7 +2,9 @@
   <h1>Panel administratora</h1>
 
   <div class="toolbar">
-    <p class="count">Wszystkich restauracji: {{ restaurants().length }}</p>
+    <p class="count">
+      Wyświetlono {{ visibleRestaurants().length }} z {{ restaurants().length }} restauracji
+    </p>
 
     <div>
       <a routerLink="/admin/new" class="btn btn-primary">+ Dodaj restaurację</a>
@@ -12,18 +14,62 @@
     </div>
   </div>
 
+  <div class="row g-2 mb-3">
+    <div class="col-md-6">
+      <label for="admin-search" class="form-label">Szukaj po nazwie</label>
+      <input
+        id="admin-search"
+        type="text"
+        class="form-control"
+        placeholder="np. pizza"
+        [(ngModel)]="searchText"
+      >
+    </div>
+
+    <div class="col-md-4">
+      <label for="admin-status" class="form-label">Status</label>
+      <select id="admin-status" class="form-select" [(ngModel)]="statusFilter">
+        <option value="all">Wszystkie</option>
+        <option value="active">Tylko aktywne</option>
+        <option value="inactive">Tylko nieaktywne</option>
+      </select>
+    </div>
+
+    <div class="col-md-2 d-flex align-items-end">
+      <button type="button" class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+        Wyczyść
+      </button>
+    </div>
+  </div>
+
   <table class="table table-striped table-hover align-middle">
     <thead>
       <tr>
-        <th scope="col">Name</th>
-        <th scope="col">Cuisine</th>
-        <th scope="col">Rating</th>
-        <th scope="col">Active</th>
+        <th scope="col" [attr.aria-sort]="ariaSort('name')">
+          <button type="button" class="sort-button" (click)="sortBy('name')">
+            Name <span aria-hidden="true">{{ sortIcon('name') }}</span>
+          </button>
+        </th>
+        <th scope="col" [attr.aria-sort]="ariaSort('cuisine')">
+          <button type="button" class="sort-button" (click)="sortBy('cuisine')">
+            Cuisine <span aria-hidden="true">{{ sortIcon('cuisine') }}</span>
+          </button>
+        </th>
+        <th scope="col" [attr.aria-sort]="ariaSort('rating')">
+          <button type="button" class="sort-button" (click)="sortBy('rating')">
+            Rating <span aria-hidden="true">{{ sortIcon('rating') }}</span>
+          </button>
+        </th>
+        <th scope="col" [attr.aria-sort]="ariaSort('active')">
+          <button type="button" class="sort-button" (click)="sortBy('active')">
+            Active <span aria-hidden="true">{{ sortIcon('active') }}</span>
+          </button>
+        </th>
         <th scope="col">Actions</th>
       </tr>
     </thead>
     <tbody>
-      @for (restaurant of restaurants(); track restaurant.id) {
+      @for (restaurant of visibleRestaurants(); track restaurant.id) {
         <tr [class.inactive-row]="!restaurant.isActive">
           <td>{{ restaurant.name }}</td>
           <td>{{ cuisineLabel(restaurant.cuisine) }}</td>
@@ -49,15 +95,19 @@
               Podgląd
             </a>
             @if (restaurant.isActive) {
-              <button type="button" class="btn btn-sm btn-outline-danger" (click)="deactivate(restaurant.id)">
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="deactivate(restaurant)">
                 Dezaktywuj
               </button>
             } @else {
-              <button type="button" class="btn btn-sm btn-outline-success" (click)="activate(restaurant.id)">
+              <button type="button" class="btn btn-sm btn-outline-success" (click)="activate(restaurant)">
                 Aktywuj
               </button>
             }
           </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="5" class="no-results">Nie znaleziono restauracji.</td>
         </tr>
       }
     </tbody>
