@@ -1,0 +1,52 @@
+.admin {
+  max-width: 960px;
+  margin: 20px auto;
+  padding: 0 30px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toolbar h1 {
+  margin: 0;
+}
+
+.count,
+.no-results {
+  color: #6c757d;
+}
+
+.count {
+  margin: 0;
+}
+
+.no-results {
+  text-align: center;
+  padding: 30px;
+}
+
+.actions .btn + .btn {
+  margin-left: 6px;
+}
+
+.reset-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.reset-form input {
+  width: auto;
+}

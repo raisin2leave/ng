@@ -1,0 +1,82 @@
+<div class="form-page">
+  <a routerLink="/admin/users" class="back-link">← Wróć do listy użytkowników</a>
+
+  <h1>Nowy administrator</h1>
+  <p class="intro">Nowe konto otrzyma rolę <strong>administrator</strong>.</p>
+
+  <form class="row g-3" (submit)="save($event)" novalidate>
+
+    <div class="col-md-6">
+      <label for="admin-name" class="form-label">Imię *</label>
+      <input
+        id="admin-name"
+        type="text"
+        class="form-control"
+        [class.is-invalid]="showErrors(adminForm.name())"
+        [formField]="adminForm.name"
+      >
+      <app-field-errors [field]="adminForm.name()" [showAll]="triedToSave()" />
+    </div>
+
+    <div class="col-md-6">
+      <label for="admin-phone" class="form-label">Telefon</label>
+      <input
+        id="admin-phone"
+        type="tel"
+        class="form-control"
+        [class.is-invalid]="showErrors(adminForm.phone())"
+        [formField]="adminForm.phone"
+      >
+      <app-field-errors [field]="adminForm.phone()" [showAll]="triedToSave()" />
+    </div>
+
+    <div class="col-12">
+      <label for="admin-email" class="form-label">Adres e-mail *</label>
+      <input
+        id="admin-email"
+        type="email"
+        autocomplete="off"
+        class="form-control"
+        [class.is-invalid]="showErrors(adminForm.email())"
+        [formField]="adminForm.email"
+      >
+      <app-field-errors [field]="adminForm.email()" [showAll]="triedToSave()" />
+    </div>
+
+    <div class="col-md-6">
+      <label for="admin-password" class="form-label">Hasło *</label>
+      <input
+        id="admin-password"
+        type="password"
+        autocomplete="new-password"
+        class="form-control"
+        [class.is-invalid]="showErrors(adminForm.password())"
+        [formField]="adminForm.password"
+      >
+      <app-field-errors [field]="adminForm.password()" [showAll]="triedToSave()" />
+    </div>
+
+    <div class="col-md-6">
+      <label for="admin-repeat" class="form-label">Powtórz hasło *</label>
+      <input
+        id="admin-repeat"
+        type="password"
+        autocomplete="new-password"
+        class="form-control"
+        [class.is-invalid]="showErrors(adminForm.repeatPassword())"
+        [formField]="adminForm.repeatPassword"
+      >
+      <app-field-errors [field]="adminForm.repeatPassword()" [showAll]="triedToSave()" />
+    </div>
+
+    <div class="col-12">
+      @if (triedToSave() && adminForm().invalid()) {
+        <p class="text-danger" role="alert">Popraw błędy w formularzu, aby utworzyć konto.</p>
+      }
+      <button type="submit" class="btn btn-primary">Utwórz konto administratora</button>
+      <a routerLink="/admin/users" class="btn btn-outline-secondary ms-2">Anuluj</a>
+      <p class="hint">* pole wymagane</p>
+    </div>
+
+  </form>
+</div>

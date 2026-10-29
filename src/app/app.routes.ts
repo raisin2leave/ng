@@ -9,6 +9,8 @@ import { Register } from './register/register';
 import { Login } from './login/login';
 import { Forbidden } from './forbidden/forbidden';
 import { Profile } from './profile/profile';
+import { AdminUsers } from './admin-users/admin-users';
+import { AdminUserForm } from './admin-user-form/admin-user-form';
 import { adminGuard, loggedInGuard } from './guards/auth-guards';
 
 export const routes: Routes = [
@@ -29,6 +31,8 @@ export const routes: Routes = [
       { path: 'menus/:cuisine', component: AdminMenus },
       { path: 'menus/:cuisine/new/:category', component: ProductForm },
       { path: 'menus/:cuisine/edit/:productId', component: ProductForm },
+      { path: 'users', component: AdminUsers },
+      { path: 'users/new', component: AdminUserForm },
     ],
   },
   { path: '**', redirectTo: '' },

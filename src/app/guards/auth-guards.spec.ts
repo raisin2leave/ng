@@ -73,6 +73,8 @@ describe('Guards', () => {
       'menus/:cuisine',
       'menus/:cuisine/new/:category',
       'menus/:cuisine/edit/:productId',
+      'users',
+      'users/new',
     ]);
     expect(routes.some((route) => route.path?.startsWith('admin/'))).toBe(false);
   });

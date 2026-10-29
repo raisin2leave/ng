@@ -1,0 +1,92 @@
+<div class="admin">
+  <a routerLink="/admin" class="back-link">← Wróć do panelu administratora</a>
+
+  <div class="toolbar">
+    <h1>Użytkownicy</h1>
+    <a routerLink="/admin/users/new" class="btn btn-primary">+ Nowy administrator</a>
+  </div>
+
+  <div class="row g-2 mb-3 align-items-end">
+    <div class="col-md-4">
+      <label for="role-filter" class="form-label">Pokaż</label>
+      <select id="role-filter" class="form-select" [(ngModel)]="roleFilter">
+        <option value="all">Wszystkich</option>
+        <option value="admin">Tylko administratorów</option>
+        <option value="customer">Tylko klientów</option>
+      </select>
+    </div>
+    <div class="col-md-8">
+      <p class="count">Wyświetlono {{ visibleUsers().length }} z {{ users().length }} kont</p>
+    </div>
+  </div>
+
+  @if (message()) {
+    <div class="alert alert-success" role="status">{{ message() }}</div>
+  }
+
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
+        <th scope="col">Imię</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">Rola</th>
+        <th scope="col">Akcje</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of visibleUsers(); track user.id) {
+        <tr>
+          <td>
+            {{ user.name }}
+            @if (isMe(user)) {
+              <span class="badge text-bg-info">to Ty</span>
+            }
+          </td>
+          <td>{{ user.email }}</td>
+          <td>
+            @if (user.role === 'admin') {
+              <span class="badge text-bg-warning">administrator</span>
+            } @else {
+              <span class="badge text-bg-primary">klient</span>
+            }
+          </td>
+          <td class="actions">
+            @if (resettingUserId() === user.id) {
+              <form class="reset-form" (submit)="saveReset($event, user)" novalidate>
+                <label class="visually-hidden" [for]="'new-password-' + user.id">Nowe hasło dla {{ user.name }}</label>
+                <input
+                  [id]="'new-password-' + user.id"
+                  type="password"
+                  autocomplete="new-password"
+                  placeholder="Nowe hasło"
+                  class="form-control form-control-sm"
+                  [class.is-invalid]="resetError() !== ''"
+                  [(ngModel)]="newPassword"
+                  name="newPassword"
+                >
+                <button type="submit" class="btn btn-sm btn-primary">Zapisz</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="cancelReset()">Anuluj</button>
+                @if (resetError()) {
+                  <div class="invalid-feedback d-block">{{ resetError() }}</div>
+                }
+              </form>
+            } @else {
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="startReset(user)">
+                Resetuj hasło
+              </button>
+              @if (!isMe(user)) {
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteUser(user)">
+                  Usuń konto
+                </button>
+              }
+            }
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="4" class="no-results">Brak kont do wyświetlenia.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
