@@ -23,7 +23,7 @@ describe('Login', () => {
   }
 
   it('should log in with the right e-mail and password and go to the home page', () => {
-    const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigate');
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
     const { page } = createPage();
 
     typeInto(page, '#login-email', 'admin@foodapp.pl');
@@ -31,7 +31,21 @@ describe('Login', () => {
     page.querySelector('form')!.dispatchEvent(new Event('submit'));
 
     expect(TestBed.inject(Auth).currentUser()?.name).toBe('Administrator');
-    expect(navigateSpy).toHaveBeenCalledWith(['/']);
+    expect(navigateSpy).toHaveBeenCalledWith('/');
+  });
+
+  it('should go back to the page the user wanted, but only inside the app', () => {
+    const { fixture } = createPage();
+    const login = fixture.componentInstance;
+
+    fixture.componentRef.setInput('returnUrl', '/admin/users');
+    expect(login.pageAfterLogin()).toBe('/admin/users');
+
+    fixture.componentRef.setInput('returnUrl', 'https://evil.example.com');
+    expect(login.pageAfterLogin()).toBe('/');
+
+    fixture.componentRef.setInput('returnUrl', '//evil.example.com');
+    expect(login.pageAfterLogin()).toBe('/');
   });
 
   it('should show one general message for a wrong password', () => {

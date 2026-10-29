@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { email, form, FormField, required } from '@angular/forms/signals';
 import { Auth } from '../services/auth';
@@ -13,6 +13,8 @@ import { FieldErrors } from '../field-errors/field-errors';
 export class Login {
   private auth = inject(Auth);
   private router = inject(Router);
+
+  returnUrl = input<string>();
 
   currentUser = this.auth.currentUser;
 
@@ -47,6 +49,16 @@ export class Login {
       return;
     }
 
-    this.router.navigate(['/']);
+    this.router.navigateByUrl(this.pageAfterLogin());
+  }
+
+  pageAfterLogin() {
+    const wanted = this.returnUrl();
+
+    if (wanted && wanted.startsWith('/') && !wanted.startsWith('//')) {
+      return wanted;
+    }
+
+    return '/';
   }
 }

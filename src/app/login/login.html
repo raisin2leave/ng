@@ -7,6 +7,10 @@
   } @else {
     <h1>Zaloguj się</h1>
 
+    @if (pageAfterLogin() !== '/') {
+      <p class="alert alert-warning" role="status">Ta strona wymaga zalogowania. Po zalogowaniu wrócisz do niej.</p>
+    }
+
     <form class="row g-3" (submit)="logIn($event)" novalidate>
       <div class="col-12">
         <label for="login-email" class="form-label">Adres e-mail</label>

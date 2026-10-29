@@ -1,27 +1,17 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRouteSnapshot, provideRouter, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { provideRouter, Route, Router, UrlTree, withComponentInputBinding } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { adminGuard, loggedInGuard } from './auth-guards';
 import { Auth } from '../services/auth';
 import { Users } from '../services/users';
 import { routes } from '../app.routes';
+import { adminRoutes } from '../admin/admin.routes';
+import { Login } from '../login/login';
 
 describe('Guards', () => {
   beforeEach(() => {
     localStorage.clear();
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
   });
-
-  function ask(guard: typeof adminGuard) {
-    const result = TestBed.runInInjectionContext(() =>
-      guard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot),
-    );
-
-    if (result instanceof UrlTree) {
-      return 'redirect to ' + TestBed.inject(Router).serializeUrl(result);
-    }
-
-    return result;
-  }
 
   function logInAsCustomer() {
     TestBed.inject(Users).registerCustomer({
@@ -34,48 +24,108 @@ describe('Guards', () => {
     TestBed.inject(Auth).login('anna@example.com', 'bezpieczne1');
   }
 
-  describe('adminGuard', () => {
-    it('should send a visitor who is not logged in to the login page (FR-06)', () => {
-      expect(ask(adminGuard)).toBe('redirect to /login');
+  describe('guard decisions', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({ providers: [provideRouter([])] });
     });
 
-    it('should keep a customer out of the admin panel (FR-05)', () => {
+    function ask(runGuard: () => unknown) {
+      const result = TestBed.runInInjectionContext(runGuard);
+
+      if (result instanceof UrlTree) {
+        return 'redirect to ' + TestBed.inject(Router).serializeUrl(result);
+      }
+
+      return result;
+    }
+
+    const askAdminGuard = () => ask(() => adminGuard({} as Route, []));
+    const askLoggedInGuard = () => ask(() => loggedInGuard({} as never, {} as never));
+
+    it('adminGuard: a visitor who is not logged in goes to login (FR-06)', () => {
+      expect(askAdminGuard()).toBe('redirect to /login');
+    });
+
+    it('adminGuard: a customer is kept out (FR-05)', () => {
       logInAsCustomer();
-      expect(ask(adminGuard)).toBe('redirect to /forbidden');
+      expect(askAdminGuard()).toBe('redirect to /forbidden');
     });
 
-    it('should let an admin in', () => {
+    it('adminGuard: an admin is let in', () => {
       TestBed.inject(Auth).login('admin@foodapp.pl', 'Admin123!');
-      expect(ask(adminGuard)).toBe(true);
-    });
-  });
-
-  describe('loggedInGuard', () => {
-    it('should send a visitor who is not logged in to the login page', () => {
-      expect(ask(loggedInGuard)).toBe('redirect to /login');
+      expect(askAdminGuard()).toBe(true);
     });
 
-    it('should let any logged-in user in', () => {
+    it('loggedInGuard: a visitor goes to login, a logged-in user is let in', () => {
+      expect(askLoggedInGuard()).toBe('redirect to /login');
       logInAsCustomer();
-      expect(ask(loggedInGuard)).toBe(true);
+      expect(askLoggedInGuard()).toBe(true);
     });
   });
 
-  it('should protect every page under /admin with the admin guard', () => {
-    const adminRoute = routes.find((route) => route.path === 'admin')!;
+  describe('route setup', () => {
+    it('should lazy-load the whole admin panel behind the admin guard', () => {
+      const adminRoute = routes.find((route) => route.path === 'admin')!;
 
-    expect(adminRoute.canActivateChild).toEqual([adminGuard]);
-    expect(adminRoute.children!.map((child) => child.path)).toEqual([
-      '',
-      'new',
-      'edit/:id',
-      'menus',
-      'menus/:cuisine',
-      'menus/:cuisine/new/:category',
-      'menus/:cuisine/edit/:productId',
-      'users',
-      'users/new',
-    ]);
-    expect(routes.some((route) => route.path?.startsWith('admin/'))).toBe(false);
+      expect(adminRoute.canMatch).toEqual([adminGuard]);
+      expect(adminRoute.loadChildren).toBeDefined();
+      expect(adminRoute.children).toBeUndefined();
+      expect(routes.some((route) => route.path?.startsWith('admin/'))).toBe(false);
+    });
+
+    it('should contain all admin pages in the lazy admin routes file', () => {
+      expect(adminRoutes.map((route) => route.path)).toEqual([
+        '',
+        'new',
+        'edit/:id',
+        'menus',
+        'menus/:cuisine',
+        'menus/:cuisine/new/:category',
+        'menus/:cuisine/edit/:productId',
+        'users',
+        'users/new',
+      ]);
+    });
+  });
+
+  describe('real navigation (bonus: back to the wanted page after login)', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        providers: [provideRouter(routes, withComponentInputBinding())],
+      });
+    });
+
+    it('should send a visitor to login, remembering the wanted page, and return there after login', async () => {
+      const harness = await RouterTestingHarness.create();
+      const router = TestBed.inject(Router);
+
+      await harness.navigateByUrl('/admin/users');
+      expect(router.url).toBe('/login?returnUrl=%2Fadmin%2Fusers');
+
+      const login = harness.routeDebugElement!.componentInstance as Login;
+      login.credentials.set({ email: 'admin@foodapp.pl', password: 'Admin123!' });
+      login.logIn(new Event('submit'));
+      await harness.fixture.whenStable();
+
+      expect(router.url).toBe('/admin/users');
+      expect(harness.routeNativeElement?.textContent).toContain('Użytkownicy');
+    });
+
+    it('should show "Brak dostępu" to a customer who opens an admin page', async () => {
+      logInAsCustomer();
+      const harness = await RouterTestingHarness.create();
+
+      await harness.navigateByUrl('/admin');
+
+      expect(TestBed.inject(Router).url).toBe('/forbidden');
+    });
+
+    it('should remember the profile page too', async () => {
+      const harness = await RouterTestingHarness.create();
+
+      await harness.navigateByUrl('/profile');
+
+      expect(TestBed.inject(Router).url).toBe('/login?returnUrl=%2Fprofile');
+    });
   });
 });
