@@ -7,18 +7,27 @@ import { AdminMenus } from './admin-menus/admin-menus';
 import { ProductForm } from './product-form/product-form';
 import { Register } from './register/register';
 import { Login } from './login/login';
+import { Forbidden } from './forbidden/forbidden';
+import { adminGuard } from './guards/auth-guards';
 
 export const routes: Routes = [
   { path: '', component: RestList },
   { path: 'restaurant/:id', component: RestDetails },
   { path: 'register', component: Register },
   { path: 'login', component: Login },
-  { path: 'admin', component: AdminList },
-  { path: 'admin/new', component: RestaurantForm },
-  { path: 'admin/edit/:id', component: RestaurantForm },
-  { path: 'admin/menus', redirectTo: 'admin/menus/american', pathMatch: 'full' },
-  { path: 'admin/menus/:cuisine', component: AdminMenus },
-  { path: 'admin/menus/:cuisine/new/:category', component: ProductForm },
-  { path: 'admin/menus/:cuisine/edit/:productId', component: ProductForm },
+  { path: 'forbidden', component: Forbidden },
+  {
+    path: 'admin',
+    canActivateChild: [adminGuard],
+    children: [
+      { path: '', component: AdminList },
+      { path: 'new', component: RestaurantForm },
+      { path: 'edit/:id', component: RestaurantForm },
+      { path: 'menus', redirectTo: 'menus/american', pathMatch: 'full' },
+      { path: 'menus/:cuisine', component: AdminMenus },
+      { path: 'menus/:cuisine/new/:category', component: ProductForm },
+      { path: 'menus/:cuisine/edit/:productId', component: ProductForm },
+    ],
+  },
   { path: '**', redirectTo: '' },
 ];
