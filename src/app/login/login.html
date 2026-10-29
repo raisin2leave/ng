@@ -1,0 +1,52 @@
+<div class="login-page">
+  @if (currentUser(); as user) {
+    <div class="alert alert-info" role="status">
+      Jesteś już zalogowany jako <strong>{{ user.name }}</strong>.
+      <a routerLink="/">Przejdź do restauracji</a>
+    </div>
+  } @else {
+    <h1>Zaloguj się</h1>
+
+    <form class="row g-3" (submit)="logIn($event)" novalidate>
+      <div class="col-12">
+        <label for="login-email" class="form-label">Adres e-mail</label>
+        <input
+          id="login-email"
+          type="email"
+          autocomplete="email"
+          class="form-control"
+          [class.is-invalid]="showErrors(loginForm.email())"
+          [formField]="loginForm.email"
+        >
+        <app-field-errors [field]="loginForm.email()" [showAll]="triedToLogIn()" />
+      </div>
+
+      <div class="col-12">
+        <label for="login-password" class="form-label">Hasło</label>
+        <input
+          id="login-password"
+          type="password"
+          autocomplete="current-password"
+          class="form-control"
+          [class.is-invalid]="showErrors(loginForm.password())"
+          [formField]="loginForm.password"
+        >
+        <app-field-errors [field]="loginForm.password()" [showAll]="triedToLogIn()" />
+      </div>
+
+      @if (loginFailed()) {
+        <div class="col-12">
+          <p class="alert alert-danger mb-0" role="alert">Nieprawidłowy e-mail lub hasło.</p>
+        </div>
+      }
+
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary w-100">Zaloguj się</button>
+      </div>
+    </form>
+
+    <p class="register-hint">
+      Nie masz konta? <a routerLink="/register">Załóż konto</a>
+    </p>
+  }
+</div>

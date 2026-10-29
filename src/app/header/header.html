@@ -1,11 +1,26 @@
 <header class="header">
   <a routerLink="/" class="brand">FoodApp</a>
 
-  <nav class="nav-links">
+  <nav class="nav-links" aria-label="Menu główne">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
       Restauracje
     </a>
-    <a routerLink="/admin" routerLinkActive="active">Panel admina</a>
-    <a routerLink="/register" routerLinkActive="active">Załóż konto</a>
+
+    @if (isAdmin()) {
+      <a routerLink="/admin" routerLinkActive="active">Panel admina</a>
+    }
+
+    @if (currentUser(); as user) {
+      <span class="user-info">
+        Zalogowano: <strong>{{ user.name }}</strong>
+        @if (user.role === 'admin') {
+          <span class="badge text-bg-warning">admin</span>
+        }
+      </span>
+      <button type="button" class="logout-button" (click)="logOut()">Wyloguj</button>
+    } @else {
+      <a routerLink="/login" routerLinkActive="active">Zaloguj się</a>
+      <a routerLink="/register" routerLinkActive="active">Załóż konto</a>
+    }
   </nav>
 </header>
