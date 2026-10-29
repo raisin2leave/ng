@@ -1,5 +1,15 @@
 # Foodapp
 
+## Konto testowe administratora (Lab 5)
+
+Aplikacja startuje z jednym kontem administratora (dane testowe, tylko do zajęć):
+
+- e-mail: `admin@foodapp.pl`
+- hasło: `Admin123!`
+
+W `src/app/data/users.json` zapisany jest wyłącznie skrót (hash bcrypt) hasła, nie samo hasło.
+Hasło można zmienić w aplikacji (Panel admina → Użytkownicy → reset hasła).
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.24.
 
 ## Development server

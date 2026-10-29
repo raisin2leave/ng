@@ -1,0 +1,10 @@
+[
+  {
+    "id": "admin-1",
+    "name": "Administrator",
+    "email": "admin@foodapp.pl",
+    "phone": "",
+    "role": "admin",
+    "passwordHash": "$2b$10$OCzjyHY/oQ/Vr8YzIuxRDu7l7B.jwMIXXgilgGkXwAlVb8qgOqk/C"
+  }
+]
