@@ -11,12 +11,12 @@
     }
 
     @if (currentUser(); as user) {
-      <span class="user-info">
+      <a routerLink="/profile" routerLinkActive="active" class="user-info" title="Mój profil">
         Zalogowano: <strong>{{ user.name }}</strong>
         @if (user.role === 'admin') {
           <span class="badge text-bg-warning">admin</span>
         }
-      </span>
+      </a>
       <button type="button" class="logout-button" (click)="logOut()">Wyloguj</button>
     } @else {
       <a routerLink="/login" routerLinkActive="active">Zaloguj się</a>

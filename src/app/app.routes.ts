@@ -8,7 +8,8 @@ import { ProductForm } from './product-form/product-form';
 import { Register } from './register/register';
 import { Login } from './login/login';
 import { Forbidden } from './forbidden/forbidden';
-import { adminGuard } from './guards/auth-guards';
+import { Profile } from './profile/profile';
+import { adminGuard, loggedInGuard } from './guards/auth-guards';
 
 export const routes: Routes = [
   { path: '', component: RestList },
@@ -16,6 +17,7 @@ export const routes: Routes = [
   { path: 'register', component: Register },
   { path: 'login', component: Login },
   { path: 'forbidden', component: Forbidden },
+  { path: 'profile', component: Profile, canActivate: [loggedInGuard] },
   {
     path: 'admin',
     canActivateChild: [adminGuard],

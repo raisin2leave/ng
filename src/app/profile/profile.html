@@ -1,0 +1,137 @@
+<div class="form-page">
+  @if (currentUser(); as user) {
+    <h1>Mój profil</h1>
+    <p class="role-info">
+      Typ konta:
+      @if (user.role === 'admin') {
+        <span class="badge text-bg-warning">administrator</span>
+      } @else {
+        <span class="badge text-bg-primary">klient</span>
+      }
+      <span class="hint">(nie można go zmienić)</span>
+    </p>
+
+    @if (saved()) {
+      <div class="alert alert-success" role="status">Zmiany zostały zapisane.</div>
+    }
+
+    <form class="row g-3" (submit)="save($event)" novalidate>
+
+      <h2 class="h5 col-12">Dane konta</h2>
+
+      <div class="col-md-6">
+        <label for="profile-name" class="form-label">Imię *</label>
+        <input
+          id="profile-name"
+          type="text"
+          autocomplete="given-name"
+          class="form-control"
+          [class.is-invalid]="showErrors(profileForm.name())"
+          [formField]="profileForm.name"
+        >
+        <app-field-errors [field]="profileForm.name()" [showAll]="triedToSave()" />
+      </div>
+
+      <div class="col-md-6">
+        <label for="profile-phone" class="form-label">Telefon</label>
+        <input
+          id="profile-phone"
+          type="tel"
+          autocomplete="tel"
+          class="form-control"
+          [class.is-invalid]="showErrors(profileForm.phone())"
+          [formField]="profileForm.phone"
+        >
+        <app-field-errors [field]="profileForm.phone()" [showAll]="triedToSave()" />
+      </div>
+
+      <div class="col-12">
+        <label for="profile-email" class="form-label">Adres e-mail *</label>
+        <input
+          id="profile-email"
+          type="email"
+          autocomplete="email"
+          class="form-control"
+          [class.is-invalid]="showErrors(profileForm.email())"
+          [formField]="profileForm.email"
+        >
+        <app-field-errors [field]="profileForm.email()" [showAll]="triedToSave()" />
+      </div>
+
+      @if (isCustomer()) {
+        <h2 class="h5 col-12 mt-4">Adres dostawy</h2>
+
+        <div class="col-md-6">
+          <label for="profile-street" class="form-label">Ulica *</label>
+          <input
+            id="profile-street"
+            type="text"
+            autocomplete="address-line1"
+            class="form-control"
+            [class.is-invalid]="showErrors(profileForm.deliveryAddress.street())"
+            [formField]="profileForm.deliveryAddress.street"
+          >
+          <app-field-errors [field]="profileForm.deliveryAddress.street()" [showAll]="triedToSave()" />
+        </div>
+
+        <div class="col-md-3">
+          <label for="profile-building" class="form-label">Nr budynku *</label>
+          <input
+            id="profile-building"
+            type="text"
+            class="form-control"
+            [class.is-invalid]="showErrors(profileForm.deliveryAddress.buildingNumber())"
+            [formField]="profileForm.deliveryAddress.buildingNumber"
+          >
+          <app-field-errors [field]="profileForm.deliveryAddress.buildingNumber()" [showAll]="triedToSave()" />
+        </div>
+
+        <div class="col-md-3">
+          <label for="profile-apartment" class="form-label">Nr lokalu</label>
+          <input
+            id="profile-apartment"
+            type="text"
+            class="form-control"
+            [formField]="profileForm.deliveryAddress.apartmentNumber"
+          >
+        </div>
+
+        <div class="col-md-4">
+          <label for="profile-postal" class="form-label">Kod pocztowy *</label>
+          <input
+            id="profile-postal"
+            type="text"
+            autocomplete="postal-code"
+            placeholder="00-000"
+            class="form-control"
+            [class.is-invalid]="showErrors(profileForm.deliveryAddress.postalCode())"
+            [formField]="profileForm.deliveryAddress.postalCode"
+          >
+          <app-field-errors [field]="profileForm.deliveryAddress.postalCode()" [showAll]="triedToSave()" />
+        </div>
+
+        <div class="col-md-8">
+          <label for="profile-city" class="form-label">Miasto *</label>
+          <input
+            id="profile-city"
+            type="text"
+            autocomplete="address-level2"
+            class="form-control"
+            [class.is-invalid]="showErrors(profileForm.deliveryAddress.city())"
+            [formField]="profileForm.deliveryAddress.city"
+          >
+          <app-field-errors [field]="profileForm.deliveryAddress.city()" [showAll]="triedToSave()" />
+        </div>
+      }
+
+      <div class="col-12">
+        @if (triedToSave() && profileForm().invalid()) {
+          <p class="text-danger" role="alert">Popraw błędy w formularzu, aby zapisać.</p>
+        }
+        <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+        <p class="hint">* pole wymagane</p>
+      </div>
+
+    </form>
+  }
+</div>
