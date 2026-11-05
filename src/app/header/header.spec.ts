@@ -3,6 +3,9 @@ import { provideRouter } from '@angular/router';
 import { Header } from './header';
 import { Auth } from '../services/auth';
 import { Users } from '../services/users';
+import { Cart } from '../services/cart';
+import { Restaurants } from '../services/restaurants';
+import { Menus } from '../services/menus';
 
 describe('Header', () => {
   beforeEach(() => {
@@ -63,5 +66,20 @@ describe('Header', () => {
     expect(auth.isLoggedIn()).toBe(false);
     expect(links()).toContain('/login');
     expect(page.textContent).not.toContain('Administrator');
+  });
+
+  it('should link to the cart and show how many products are in it', () => {
+    const { fixture, page, links } = createHeader();
+    expect(links()).toContain('/cart');
+    expect(page.querySelector('.cart-link .badge')).toBeNull();
+
+    const restaurant = TestBed.inject(Restaurants).getById(1)!;
+    const product = TestBed.inject(Menus).getByCuisine(restaurant.cuisine)!.categories[0].products[0];
+    const cart = TestBed.inject(Cart);
+    cart.add(restaurant, product);
+    cart.add(restaurant, product);
+    fixture.detectChanges();
+
+    expect(page.querySelector('.cart-link .badge')?.textContent).toBe('2');
   });
 });

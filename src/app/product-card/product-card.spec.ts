@@ -62,4 +62,19 @@ describe('ProductCard', () => {
     fixture.componentInstance.onAddToCartClick();
     expect(added).toEqual([]);
   });
+
+  it('should block adding when the restaurant is closed', () => {
+    const fixture = TestBed.createComponent(ProductCard);
+    fixture.componentRef.setInput('product', testProduct);
+    fixture.componentRef.setInput('canOrder', false);
+    fixture.detectChanges();
+
+    const added: Product[] = [];
+    fixture.componentInstance.addToCart.subscribe((product) => added.push(product));
+
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('button');
+    expect(button.disabled).toBe(true);
+    fixture.componentInstance.onAddToCartClick();
+    expect(added).toEqual([]);
+  });
 });

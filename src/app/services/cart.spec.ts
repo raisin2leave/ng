@@ -91,6 +91,18 @@ describe('Cart service', () => {
     expect(cart.items()[0].quantity).toBe(2);
   });
 
+  it('should change the quantity step by step using the current quantity', () => {
+    const cart = TestBed.inject(Cart);
+    cart.add(pierogarnia, pierogi);
+
+    cart.changeQuantityBy(101, 1);
+    cart.changeQuantityBy(101, 1);
+    expect(cart.items()[0].quantity).toBe(3);
+
+    cart.changeQuantityBy(101, -5);
+    expect(cart.items()[0].quantity).toBe(1);
+  });
+
   it('should remove a product and forget the restaurant when the cart becomes empty', () => {
     const cart = TestBed.inject(Cart);
     cart.add(pierogarnia, pierogi);
@@ -112,6 +124,19 @@ describe('Cart service', () => {
     expect(cart.add(pizzeria, zurek)).toBe('other-restaurant');
     expect(cart.items().length).toBe(1);
     expect(cart.restaurant()?.id).toBe(1);
+  });
+
+  it('should refuse products from a closed restaurant', () => {
+    const cart = TestBed.inject(Cart);
+    const closed = { ...pizzeria, isActive: false };
+
+    expect(cart.add(closed, zurek)).toBe('restaurant-closed');
+    expect(cart.isEmpty()).toBe(true);
+
+    cart.add(pierogarnia, pierogi);
+    cart.replaceWith(closed, zurek);
+    expect(cart.restaurant()?.id).toBe(1);
+    expect(cart.items().length).toBe(1);
   });
 
   it('should replace the whole cart with the product from the new restaurant', () => {

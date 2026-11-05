@@ -1,0 +1,76 @@
+<div class="cart-page">
+  <h1>Koszyk</h1>
+
+  @if (cart.restaurant(); as restaurant) {
+    <p class="restaurant-name">
+      Zamówienie z restauracji
+      <a [routerLink]="['/restaurant', restaurant.id]">{{ restaurant.name }}</a>
+    </p>
+
+    <ul class="cart-items">
+      @for (item of cart.items(); track item.product.id) {
+        <li class="cart-item">
+          <div class="item-name">
+            <strong>{{ item.product.name }}</strong>
+            <span class="unit-price">{{ item.product.price.toFixed(2) }} zł / szt.</span>
+          </div>
+
+          <div class="quantity" role="group" [attr.aria-label]="'Ilość: ' + item.product.name">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              [disabled]="item.quantity <= 1"
+              [attr.aria-label]="'Zmniejsz ilość: ' + item.product.name"
+              (click)="decrease(item)"
+            >−</button>
+
+            <input
+              type="number"
+              class="form-control form-control-sm"
+              min="1"
+              [max]="maxQuantity"
+              [value]="item.quantity"
+              [attr.aria-label]="'Ilość: ' + item.product.name"
+              (change)="onQuantityChange(item, $event)"
+            >
+
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              [disabled]="item.quantity >= maxQuantity"
+              [attr.aria-label]="'Zwiększ ilość: ' + item.product.name"
+              (click)="increase(item)"
+            >+</button>
+          </div>
+
+          <span class="line-total">{{ (item.product.price * item.quantity).toFixed(2) }} zł</span>
+
+          <button
+            type="button"
+            class="btn btn-outline-danger btn-sm"
+            [attr.aria-label]="'Usuń z koszyka: ' + item.product.name"
+            (click)="remove(item)"
+          >Usuń</button>
+        </li>
+      }
+    </ul>
+
+    <dl class="summary">
+      <div>
+        <dt>Suma zamówienia</dt>
+        <dd>{{ cart.subtotal().toFixed(2) }} zł</dd>
+      </div>
+      <div>
+        <dt>Koszt dostawy</dt>
+        <dd>{{ cart.deliveryFee().toFixed(2) }} zł</dd>
+      </div>
+      <div class="to-pay">
+        <dt>Kwota do zapłaty</dt>
+        <dd>{{ cart.total().toFixed(2) }} zł</dd>
+      </div>
+    </dl>
+  } @else {
+    <p class="empty">Twój koszyk jest pusty.</p>
+    <a routerLink="/" class="btn btn-primary">Wybierz restaurację</a>
+  }
+</div>

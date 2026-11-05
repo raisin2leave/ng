@@ -9,11 +9,12 @@ import { Product } from '../models/menu';
 })
 export class ProductCard {
   product = input.required<Product>();
+  canOrder = input(true);
 
   addToCart = output<Product>();
 
   onAddToCartClick() {
-    if (!this.product().isAvailable) {
+    if (!this.product().isAvailable || !this.canOrder()) {
       return;
     }
 

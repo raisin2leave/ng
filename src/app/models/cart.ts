@@ -5,4 +5,4 @@ export type CartItem = {
   quantity: number;
 };
 
-export type AddToCartResult = 'added' | 'other-restaurant';
+export type AddToCartResult = 'added' | 'other-restaurant' | 'restaurant-closed';

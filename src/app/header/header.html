@@ -6,6 +6,14 @@
       Restauracje
     </a>
 
+    <a routerLink="/cart" routerLinkActive="active" class="cart-link">
+      🛒 Koszyk
+      @if (cartCount() > 0) {
+        <span class="badge rounded-pill text-bg-primary">{{ cartCount() }}</span>
+        <span class="visually-hidden">produktów</span>
+      }
+    </a>
+
     @if (isAdmin()) {
       <a routerLink="/admin" routerLinkActive="active">Panel admina</a>
     }

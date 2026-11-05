@@ -40,11 +40,21 @@
       <li><strong>Min. zamówienie:</strong> {{ restaurant.minimumOrderValue }} zł</li>
     </ul>
 
+    @if (!restaurant.isActive) {
+      <p class="alert alert-warning closed-info" role="status">
+        Restauracja jest teraz zamknięta. Możesz przeglądać menu, ale nie możesz złożyć zamówienia.
+      </p>
+    }
+
     <div class="cart-summary" aria-live="polite">
-      @if (cart().length === 0) {
+      @if (cart.isEmpty()) {
         Koszyk jest pusty
+      } @else if (isCartFromThisRestaurant()) {
+        <span>🛒 Koszyk: {{ cart.itemCount() }} szt. • {{ cart.subtotal().toFixed(2) }} zł</span>
+        <a routerLink="/cart" class="btn btn-primary btn-sm">Przejdź do koszyka</a>
       } @else {
-        🛒 Koszyk: {{ cart().length }} szt. • {{ cartTotal().toFixed(2) }} zł
+        <span>🛒 W koszyku masz produkty z restauracji „{{ cart.restaurant()?.name }}”</span>
+        <a routerLink="/cart" class="btn btn-outline-primary btn-sm">Zobacz koszyk</a>
       }
     </div>
 
@@ -57,7 +67,11 @@
 
           <div class="product-grid">
             @for (product of category.products; track product.id) {
-              <app-product-card [product]="product" (addToCart)="addToCart($event)" />
+              <app-product-card
+                [product]="product"
+                [canOrder]="restaurant.isActive"
+                (addToCart)="addToCart($event)"
+              />
             }
           </div>
         </section>
@@ -69,3 +83,29 @@
     <p class="not-found">Nie znaleziono restauracji.</p>
   }
 </div>
+
+@if (pendingProduct(); as product) {
+  <div class="dialog-backdrop">
+    <div
+      class="dialog-box"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="other-restaurant-title"
+      aria-describedby="other-restaurant-text"
+    >
+      <h2 id="other-restaurant-title">Koszyk zawiera produkty z innej restauracji</h2>
+      <p id="other-restaurant-text">
+        Możesz zamawiać tylko z jednej restauracji naraz. W koszyku masz produkty z
+        „{{ cart.restaurant()?.name }}”. Co zrobić z produktem „{{ product.name }}”?
+      </p>
+      <div class="dialog-buttons">
+        <button type="button" class="btn btn-secondary" (click)="cancelAdding()">
+          Anuluj dodawanie nowego produktu
+        </button>
+        <button type="button" class="btn btn-danger" (click)="replaceCart()">
+          Anuluj bieżące zamówienie i dodaj nowe
+        </button>
+      </div>
+    </div>
+  </div>
+}

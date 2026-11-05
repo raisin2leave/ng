@@ -80,10 +80,49 @@
   gap: 16px;
 }
 
+.closed-info {
+  margin: 20px 0 0;
+}
+
 .cart-summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
   margin-top: 20px;
   padding: 12px 16px;
   border-radius: 8px;
   background: #e7f1ff;
   font-weight: bold;
+}
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-box {
+  max-width: 480px;
+  padding: 24px;
+  border-radius: 12px;
+  background: white;
+}
+
+.dialog-box h2 {
+  font-size: 1.3rem;
+}
+
+.dialog-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
 }

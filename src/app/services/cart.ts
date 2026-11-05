@@ -48,6 +48,10 @@ export class Cart {
   total = computed(() => roundMoney(this.subtotal() + this.deliveryFee()));
 
   add(restaurant: Restaurant, product: Product): AddToCartResult {
+    if (!restaurant.isActive) {
+      return 'restaurant-closed';
+    }
+
     const current = this.restaurant();
 
     if (!this.isEmpty() && current && current.id !== restaurant.id) {
@@ -56,10 +60,8 @@ export class Cart {
 
     this.restaurantSignal.set(restaurant);
 
-    const existing = this.findItem(product.id);
-
-    if (existing) {
-      this.setQuantity(product.id, existing.quantity + 1);
+    if (this.findItem(product.id)) {
+      this.changeQuantityBy(product.id, 1);
     } else {
       this.itemsSignal.set([...this.items(), { product: product, quantity: 1 }]);
     }
@@ -68,6 +70,10 @@ export class Cart {
   }
 
   replaceWith(restaurant: Restaurant, product: Product) {
+    if (!restaurant.isActive) {
+      return;
+    }
+
     this.clear();
     this.add(restaurant, product);
   }
@@ -89,6 +95,14 @@ export class Cart {
     }
 
     this.itemsSignal.set(updatedItems);
+  }
+
+  changeQuantityBy(productId: number, step: number) {
+    const item = this.findItem(productId);
+
+    if (item) {
+      this.setQuantity(productId, item.quantity + step);
+    }
   }
 
   remove(productId: number) {

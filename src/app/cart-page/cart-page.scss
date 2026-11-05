@@ -1,0 +1,89 @@
+.cart-page {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 30px;
+}
+
+.restaurant-name {
+  font-size: 1.1rem;
+}
+
+.cart-items {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.cart-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.item-name {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.unit-price {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.quantity {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quantity input {
+  width: 64px;
+  text-align: center;
+}
+
+.line-total {
+  min-width: 90px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.summary {
+  max-width: 320px;
+  margin-left: auto;
+}
+
+.summary div {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.summary dt {
+  font-weight: normal;
+}
+
+.summary dd {
+  margin: 0;
+}
+
+.summary .to-pay {
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 2px solid #212529;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.summary .to-pay dt {
+  font-weight: bold;
+}
+
+.empty {
+  margin: 40px 0 20px;
+  font-size: 1.25rem;
+  color: #6c757d;
+}

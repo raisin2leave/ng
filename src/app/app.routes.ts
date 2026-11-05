@@ -5,11 +5,13 @@ import { Register } from './register/register';
 import { Login } from './login/login';
 import { Forbidden } from './forbidden/forbidden';
 import { Profile } from './profile/profile';
+import { CartPage } from './cart-page/cart-page';
 import { adminGuard, loggedInGuard } from './guards/auth-guards';
 
 export const routes: Routes = [
   { path: '', component: RestList },
   { path: 'restaurant/:id', component: RestDetails },
+  { path: 'cart', component: CartPage },
   { path: 'register', component: Register },
   { path: 'login', component: Login },
   { path: 'forbidden', component: Forbidden },
