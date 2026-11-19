@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Cart, MAX_QUANTITY } from '../services/cart';
+import { Restaurants } from '../services/restaurants';
 import { CartItem } from '../models/cart';
 
 @Component({
@@ -11,8 +12,19 @@ import { CartItem } from '../models/cart';
 })
 export class CartPage {
   cart = inject(Cart);
+  private restaurantsService = inject(Restaurants);
 
   maxQuantity = MAX_QUANTITY;
+
+  restaurantIsOpen = computed(() => {
+    const restaurant = this.cart.restaurant();
+
+    if (!restaurant) {
+      return false;
+    }
+
+    return this.restaurantsService.getById(restaurant.id)?.isActive === true;
+  });
 
   increase(item: CartItem) {
     this.cart.changeQuantityBy(item.product.id, 1);

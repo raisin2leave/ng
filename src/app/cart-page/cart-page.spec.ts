@@ -109,4 +109,28 @@ describe('CartPage', () => {
       `Kwota do zapłaty ${(subtotal + restaurant.deliveryFee).toFixed(2)} zł`,
     ]);
   });
+
+  describe('going to checkout', () => {
+    it('should show "Przejdź do zamówienia" for a cart from an open restaurant', () => {
+      const { page } = fillCartAndOpenPage();
+      expect(page.querySelector('.checkout-action a')?.getAttribute('href')).toBe('/checkout');
+    });
+
+    it('should not offer checkout for an empty cart', () => {
+      const fixture = TestBed.createComponent(CartPage);
+      fixture.detectChanges();
+      const page: HTMLElement = fixture.nativeElement;
+      expect(page.querySelector('a[href="/checkout"]')).toBeNull();
+    });
+
+    it('should not offer checkout when the restaurant has been closed in the meantime', () => {
+      const { fixture, page, restaurant } = fillCartAndOpenPage();
+
+      TestBed.inject(Restaurants).setActive(restaurant.id, false);
+      fixture.detectChanges();
+
+      expect(page.querySelector('a[href="/checkout"]')).toBeNull();
+      expect(page.textContent).toContain('Ta restauracja jest teraz nieczynna');
+    });
+  });
 });

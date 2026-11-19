@@ -1,0 +1,62 @@
+.checkout-page {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 0 30px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.hint {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.order-summary {
+  position: sticky;
+  top: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #f8f9fa;
+}
+
+.restaurant {
+  color: #6c757d;
+}
+
+.summary-items {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+}
+
+.summary-items li,
+.summary div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.summary {
+  margin: 0;
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+}
+
+.summary dt {
+  font-weight: normal;
+}
+
+.summary dd {
+  margin: 0;
+}
+
+.to-pay {
+  font-weight: bold;
+  font-size: 1.1rem;
+}

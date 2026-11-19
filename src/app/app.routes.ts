@@ -6,12 +6,15 @@ import { Login } from './login/login';
 import { Forbidden } from './forbidden/forbidden';
 import { Profile } from './profile/profile';
 import { CartPage } from './cart-page/cart-page';
+import { Checkout } from './checkout/checkout';
 import { adminGuard, loggedInGuard } from './guards/auth-guards';
+import { cartReadyGuard } from './guards/cart-guard';
 
 export const routes: Routes = [
   { path: '', component: RestList },
   { path: 'restaurant/:id', component: RestDetails },
   { path: 'cart', component: CartPage },
+  { path: 'checkout', component: Checkout, canActivate: [loggedInGuard, cartReadyGuard] },
   { path: 'register', component: Register },
   { path: 'login', component: Login },
   { path: 'forbidden', component: Forbidden },
