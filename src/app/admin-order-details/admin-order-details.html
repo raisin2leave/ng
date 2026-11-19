@@ -1,0 +1,35 @@
+<div class="admin">
+  <a routerLink="/admin/orders" class="back-link">← Wróć do listy zamówień</a>
+
+  @if (order(); as order) {
+    <form class="status-panel" (submit)="saveStatus($event)">
+      <label for="new-status" class="form-label"><strong>Zmień status</strong></label>
+      <div class="status-row">
+        <select id="new-status" name="newStatus" class="form-select" [(ngModel)]="chosenStatus">
+          @for (status of orderStatuses; track status.value) {
+            <option [value]="status.value">{{ status.label }}</option>
+          }
+        </select>
+        <button type="submit" class="btn btn-primary" [disabled]="chosenStatus() === order.status">
+          Zapisz status
+        </button>
+      </div>
+      @if (message()) {
+        <p class="alert alert-success mt-2 mb-0" role="status">{{ message() }}</p>
+      }
+    </form>
+
+    <app-order-view [order]="order" />
+
+    <section class="account">
+      <h2 class="h6">Konto klienta</h2>
+      @if (customerAccount(); as account) {
+        <p class="mb-0">{{ account.name }} · {{ account.email }}</p>
+      } @else {
+        <p class="mb-0 text-secondary">Konto, z którego złożono zamówienie, zostało usunięte.</p>
+      }
+    </section>
+  } @else {
+    <p class="not-found">Nie znaleziono zamówienia.</p>
+  }
+</div>

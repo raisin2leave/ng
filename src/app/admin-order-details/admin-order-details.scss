@@ -1,0 +1,41 @@
+.admin {
+  max-width: 960px;
+  margin: 20px auto;
+  padding: 0 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.back-link {
+  align-self: flex-start;
+}
+
+.status-panel {
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #f8f9fa;
+}
+
+.status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.status-row select {
+  width: auto;
+  min-width: 220px;
+}
+
+.account {
+  border-top: 1px solid #ddd;
+  padding-top: 16px;
+}
+
+.not-found {
+  margin: 40px 0;
+  font-size: 1.25rem;
+  color: #6c757d;
+}

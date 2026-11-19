@@ -5,6 +5,8 @@ import { AdminMenus } from '../admin-menus/admin-menus';
 import { ProductForm } from '../product-form/product-form';
 import { AdminUsers } from '../admin-users/admin-users';
 import { AdminUserForm } from '../admin-user-form/admin-user-form';
+import { AdminOrders } from '../admin-orders/admin-orders';
+import { AdminOrderDetails } from '../admin-order-details/admin-order-details';
 
 export const adminRoutes: Routes = [
   { path: '', component: AdminList },
@@ -16,4 +18,6 @@ export const adminRoutes: Routes = [
   { path: 'menus/:cuisine/edit/:productId', component: ProductForm },
   { path: 'users', component: AdminUsers },
   { path: 'users/new', component: AdminUserForm },
+  { path: 'orders', component: AdminOrders },
+  { path: 'orders/:id', component: AdminOrderDetails },
 ];

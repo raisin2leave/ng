@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { CheckoutData, Order, OrderItem } from '../models/order';
+import { CheckoutData, Order, OrderItem, OrderStatus } from '../models/order';
 import { CartItem } from '../models/cart';
 import { Restaurant } from '../models/restaurant';
 
@@ -72,6 +72,20 @@ export class Orders {
 
     this.saveAll([...this.orders(), order]);
     return order;
+  }
+
+  changeStatus(id: number, status: OrderStatus) {
+    const updated: Order[] = [];
+
+    for (const order of this.orders()) {
+      if (order.id === id) {
+        updated.push({ ...order, status: status });
+      } else {
+        updated.push(order);
+      }
+    }
+
+    this.saveAll(updated);
   }
 
   private nextOrderNumber() {

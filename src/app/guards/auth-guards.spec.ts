@@ -84,6 +84,8 @@ describe('Guards', () => {
         'menus/:cuisine/edit/:productId',
         'users',
         'users/new',
+        'orders',
+        'orders/:id',
       ]);
     });
   });

@@ -73,4 +73,16 @@ describe('Orders service', () => {
     expect(service.getForUser('anna').map((order) => order.id)).toEqual([1003, 1001]);
     expect(service.getForUser('nikt')).toEqual([]);
   });
+
+  it('should change the status of one order and save it', () => {
+    const service = TestBed.inject(Orders);
+    service.placeOrder('anna', cartSnapshot(), checkoutData);
+    service.placeOrder('anna', cartSnapshot(), checkoutData);
+
+    service.changeStatus(1001, 'preparing');
+
+    expect(service.getById(1001)?.status).toBe('preparing');
+    expect(service.getById(1002)?.status).toBe('new');
+    expect(JSON.parse(localStorage.getItem('foodapp-orders')!)[0].status).toBe('preparing');
+  });
 });
