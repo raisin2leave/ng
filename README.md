@@ -20,6 +20,38 @@ Kod wpisuje się w koszyku. Wielkość liter nie ma znaczenia.
 | `DARMOWADOSTAWA` | darmowa dostawa |
 | `MINUS20` | 20 zł zniżki przy zamówieniu od 80 zł |
 
+## Backend API (Lab 7)
+
+Dane restauracji, menu i zamówień pochodzą z lokalnego REST API ([json-server](https://github.com/typicode/json-server) 0.17).
+Podczas pracy uruchom **dwa** programy, każdy w osobnym terminalu:
+
+```bash
+npm run api
+```
+
+```bash
+npm start
+```
+
+API działa pod adresem `http://localhost:3000`:
+
+```text
+GET   /restaurants
+GET   /restaurants/:id
+GET   /restaurants/:id/menus
+GET   /menus/:id/categories
+GET   /categories/:id/products
+GET   /orders
+POST  /orders
+PATCH /orders/:id
+```
+
+- `api/db.seed.json` — dane startowe (w repozytorium),
+- `api/db.json` — kopia robocza, którą zmienia API (np. nowe zamówienia); nie jest w repozytorium,
+- `npm run api:reset` — przywraca dane startowe.
+
+To serwer tylko do nauki: nie ma logowania ani zabezpieczeń.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.24.
 
 ## Development server

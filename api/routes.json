@@ -1,0 +1,5 @@
+{
+  "/restaurants/:id/menus": "/menus?restaurantId=:id",
+  "/menus/:id/categories": "/categories?menuId=:id",
+  "/categories/:id/products": "/products?categoryId=:id"
+}

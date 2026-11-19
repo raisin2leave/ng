@@ -43,3 +43,6 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# json-server working copy (changes when orders are placed); the committed data is api/db.seed.json
+/api/db.json
