@@ -1,7 +1,14 @@
 <div class="form-page">
   <a routerLink="/admin" class="back-link">← Wróć do panelu administratora</a>
 
-  @if (notFound()) {
+  @if (waitingForData()) {
+    <app-data-state
+      [loading]="restaurantsService.isLoading()"
+      [failed]="restaurantsService.loadFailed()"
+      loadingText="Ładowanie restauracji…"
+      (retry)="restaurantsService.reload()"
+    />
+  } @else if (notFound()) {
     <p class="not-found">Nie znaleziono restauracji.</p>
   } @else {
     @if (id() === undefined) {
@@ -146,7 +153,12 @@
         @if (triedToSave() && restaurantForm().invalid()) {
           <p class="text-danger" role="alert">Popraw błędy w formularzu, aby zapisać.</p>
         }
-        <button type="submit" class="btn btn-primary">Zapisz</button>
+        @if (saveError()) {
+          <p class="alert alert-danger" role="alert">{{ saveError() }}</p>
+        }
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Zapisywanie…' : 'Zapisz' }}
+        </button>
         <a routerLink="/admin" class="btn btn-outline-secondary ms-2">Anuluj</a>
         <p class="hint">* pole wymagane</p>
       </div>

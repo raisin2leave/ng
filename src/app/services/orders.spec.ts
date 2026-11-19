@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { Orders } from './orders';
-import { Restaurants } from './restaurants';
 import { Menus } from './menus';
 import { CheckoutData } from '../models/order';
+import { restaurantFromSeed } from '../testing/api-test';
 
 const checkoutData: CheckoutData = {
   contact: { firstName: 'Anna', lastName: 'Nowak', email: 'anna@example.com', phone: '600100200' },
@@ -16,7 +16,7 @@ describe('Orders service', () => {
   });
 
   function cartSnapshot() {
-    const restaurant = TestBed.inject(Restaurants).getById(3)!;
+    const restaurant = restaurantFromSeed(3);
     const product = TestBed.inject(Menus).getByCuisine(restaurant.cuisine)!.categories[0].products[0];
     return {
       restaurant,

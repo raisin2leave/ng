@@ -2,11 +2,13 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AdminMenus } from './admin-menus';
 import { Menus } from '../services/menus';
+import { answerRestaurantList, provideTestApi } from '../testing/api-test';
 
 describe('AdminMenus', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     localStorage.clear();
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    TestBed.configureTestingModule({ providers: [provideRouter([]), ...provideTestApi()] });
+    await answerRestaurantList();
   });
 
   afterEach(() => {

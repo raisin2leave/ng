@@ -2,12 +2,16 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RestDetails } from './rest-details';
 import { Cart } from '../services/cart';
-import { Restaurants } from '../services/restaurants';
+import { answerRestaurantList, provideTestApi, restaurantFromSeed } from '../testing/api-test';
 import { Menus } from '../services/menus';
 
 describe('RestDetails', () => {
+  beforeEach(async () => {
+    TestBed.configureTestingModule({ providers: [provideRouter([]), ...provideTestApi()] });
+    await answerRestaurantList();
+  });
+
   it('should show the restaurant with the given id', () => {
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
     const fixture = TestBed.createComponent(RestDetails);
     fixture.componentRef.setInput('id', '1');
     fixture.detectChanges();
@@ -17,7 +21,6 @@ describe('RestDetails', () => {
   });
 
   it('should show the menu of the restaurant cuisine, divided into categories', () => {
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
     const fixture = TestBed.createComponent(RestDetails);
     fixture.componentRef.setInput('id', '1');
     fixture.detectChanges();
@@ -28,7 +31,6 @@ describe('RestDetails', () => {
   });
 
   it('should add available products to the shared cart', () => {
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
     const fixture = TestBed.createComponent(RestDetails);
     fixture.componentRef.setInput('id', '1');
     fixture.detectChanges();
@@ -47,7 +49,6 @@ describe('RestDetails', () => {
   });
 
   it('should show a message and disable all "Dodaj do koszyka" buttons for a closed restaurant', () => {
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
     const fixture = TestBed.createComponent(RestDetails);
     fixture.componentRef.setInput('id', '18');
     fixture.detectChanges();
@@ -61,9 +62,8 @@ describe('RestDetails', () => {
 
   describe('product from another restaurant (FR-05)', () => {
     function openRestaurantWithForeignCart() {
-      TestBed.configureTestingModule({ providers: [provideRouter([])] });
-      const cart = TestBed.inject(Cart);
-      const otherRestaurant = TestBed.inject(Restaurants).getById(2)!;
+        const cart = TestBed.inject(Cart);
+      const otherRestaurant = restaurantFromSeed(2);
       const otherProduct = TestBed.inject(Menus).getByCuisine(otherRestaurant.cuisine)!.categories[0].products[0];
       cart.add(otherRestaurant, otherProduct);
 
@@ -120,7 +120,6 @@ describe('RestDetails', () => {
   });
 
   it('should show a message for an unknown id', () => {
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
     const fixture = TestBed.createComponent(RestDetails);
     fixture.componentRef.setInput('id', '9999');
     fixture.detectChanges();

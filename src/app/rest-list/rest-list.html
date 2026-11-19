@@ -44,10 +44,23 @@
   </div>
 </div>
 
-<section class="restaurant-list">
-  @for (restaurant of filteredRestaurants(); track restaurant.id) {
-    <app-rest-card [restaurant]="restaurant" />
-  } @empty {
-    <p class="no-results">Nie znaleziono restauracji.</p>
+<app-data-state
+  [loading]="restaurantsService.isLoading()"
+  [failed]="restaurantsService.loadFailed()"
+  loadingText="Ładowanie restauracji…"
+  (retry)="restaurantsService.reload()"
+/>
+
+@if (restaurantsService.hasLoaded()) {
+  @if (allRestaurants().length === 0) {
+    <p class="no-results text-center">Brak restauracji do wyświetlenia.</p>
+  } @else {
+    <section class="restaurant-list">
+      @for (restaurant of filteredRestaurants(); track restaurant.id) {
+        <app-rest-card [restaurant]="restaurant" />
+      } @empty {
+        <p class="no-results">Nie znaleziono restauracji.</p>
+      }
+    </section>
   }
-</section>
+}

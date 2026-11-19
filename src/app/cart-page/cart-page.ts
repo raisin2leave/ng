@@ -48,7 +48,7 @@ export class CartPage {
       return false;
     }
 
-    return this.restaurantsService.getById(restaurant.id)?.isActive === true;
+    return this.restaurantsService.isOpenNow(restaurant);
   });
 
   increase(item: CartItem) {

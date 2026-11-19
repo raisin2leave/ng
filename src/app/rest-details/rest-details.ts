@@ -5,17 +5,18 @@ import { Product } from '../models/menu';
 import { Restaurants } from '../services/restaurants';
 import { Menus } from '../services/menus';
 import { Cart } from '../services/cart';
+import { DataState } from '../data-state/data-state';
 
 @Component({
   selector: 'app-rest-details',
-  imports: [RouterLink, ProductCard],
+  imports: [RouterLink, ProductCard, DataState],
   templateUrl: './rest-details.html',
   styleUrl: './rest-details.scss',
 })
 export class RestDetails {
   id = input.required<string>();
 
-  private restaurantsService = inject(Restaurants);
+  restaurantsService = inject(Restaurants);
   private menusService = inject(Menus);
   cart = inject(Cart);
 

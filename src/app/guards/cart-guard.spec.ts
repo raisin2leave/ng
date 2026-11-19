@@ -2,15 +2,16 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router, UrlTree } from '@angular/router';
 import { cartReadyGuard } from './cart-guard';
 import { Cart } from '../services/cart';
-import { Restaurants } from '../services/restaurants';
+import { answerRestaurantList, closeRestaurantOnServer, provideTestApi, restaurantFromSeed } from '../testing/api-test';
 import { Menus } from '../services/menus';
 import { routes } from '../app.routes';
 import { loggedInGuard } from './auth-guards';
 
 describe('cartReadyGuard', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     localStorage.clear();
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    TestBed.configureTestingModule({ providers: [provideRouter([]), ...provideTestApi()] });
+    await answerRestaurantList();
   });
 
   function ask() {
@@ -24,7 +25,7 @@ describe('cartReadyGuard', () => {
   }
 
   function fillCart() {
-    const restaurant = TestBed.inject(Restaurants).getById(3)!;
+    const restaurant = restaurantFromSeed(3);
     const product = TestBed.inject(Menus).getByCuisine(restaurant.cuisine)!.categories[0].products[0];
     TestBed.inject(Cart).add(restaurant, product);
     return restaurant;
@@ -39,9 +40,9 @@ describe('cartReadyGuard', () => {
     expect(ask()).toBe(true);
   });
 
-  it('should not allow checkout when the restaurant was closed in the meantime', () => {
+  it('should not allow checkout when the restaurant was closed in the meantime', async () => {
     const restaurant = fillCart();
-    TestBed.inject(Restaurants).setActive(restaurant.id, false);
+    await closeRestaurantOnServer(restaurant.id);
     expect(ask()).toBe('redirect to /cart');
   });
 

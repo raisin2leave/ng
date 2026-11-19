@@ -2,17 +2,18 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { CartPage } from './cart-page';
 import { Cart } from '../services/cart';
-import { Restaurants } from '../services/restaurants';
+import { answerRestaurantList, closeRestaurantOnServer, provideTestApi, restaurantFromSeed } from '../testing/api-test';
 import { Menus } from '../services/menus';
 
 describe('CartPage', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     localStorage.clear();
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    TestBed.configureTestingModule({ providers: [provideRouter([]), ...provideTestApi()] });
+    await answerRestaurantList();
   });
 
   function fillCartAndOpenPage() {
-    const restaurant = TestBed.inject(Restaurants).getById(1)!;
+    const restaurant = restaurantFromSeed(1);
     const products = TestBed.inject(Menus).getByCuisine(restaurant.cuisine)!.categories.flatMap((category) => category.products);
     const cart = TestBed.inject(Cart);
     cart.add(restaurant, products[0]);
@@ -123,10 +124,10 @@ describe('CartPage', () => {
       expect(page.querySelector('a[href="/checkout"]')).toBeNull();
     });
 
-    it('should not offer checkout when the restaurant has been closed in the meantime', () => {
+    it('should not offer checkout when the restaurant has been closed in the meantime', async () => {
       const { fixture, page, restaurant } = fillCartAndOpenPage();
 
-      TestBed.inject(Restaurants).setActive(restaurant.id, false);
+      await closeRestaurantOnServer(restaurant.id);
       fixture.detectChanges();
 
       expect(page.querySelector('a[href="/checkout"]')).toBeNull();

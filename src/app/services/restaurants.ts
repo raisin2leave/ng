@@ -1,15 +1,25 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
+import { HttpClient, httpResource } from '@angular/common/http';
+import { tap } from 'rxjs';
 import { Restaurant, RestaurantFormValue } from '../models/restaurant';
-import restaurantsData from '../data/restaurants.json';
-
-const STORAGE_KEY = 'foodapp-restaurants';
+import { API_URL } from '../api';
 
 @Injectable({ providedIn: 'root' })
 export class Restaurants {
-  private restaurants = signal<Restaurant[]>(this.loadFromStorage());
+  private http = inject(HttpClient);
+
+  private listResource = httpResource<Restaurant[]>(() => `${API_URL}/restaurants`, {
+    defaultValue: [],
+  });
+
+  private restaurants = computed(() => (this.listResource.hasValue() ? this.listResource.value() : []));
+
+  isLoading = this.listResource.isLoading;
+  loadFailed = computed(() => this.listResource.error() !== undefined);
+  hasLoaded = computed(() => this.listResource.status() === 'resolved' || this.listResource.status() === 'local');
 
   getAll() {
-    return this.restaurants.asReadonly();
+    return this.restaurants;
   }
 
   getById(id: number) {
@@ -22,78 +32,42 @@ export class Restaurants {
     return undefined;
   }
 
-  create(data: RestaurantFormValue) {
-    const newRestaurant: Restaurant = {
-      ...data,
-      id: this.nextId(),
-      rating: 0,
-    };
+  isOpenNow(restaurant: Restaurant) {
+    const current = this.getById(restaurant.id) ?? restaurant;
+    return current.isActive;
+  }
 
-    this.saveAll([...this.restaurants(), newRestaurant]);
-    return newRestaurant;
+  reload() {
+    this.listResource.reload();
+  }
+
+  create(data: RestaurantFormValue) {
+    return this.http
+      .post<Restaurant>(`${API_URL}/restaurants`, { ...data, rating: 0 })
+      .pipe(tap((created) => this.listResource.update((list) => [...list, created])));
   }
 
   update(id: number, data: RestaurantFormValue) {
-    const updatedList: Restaurant[] = [];
-
-    for (const restaurant of this.restaurants()) {
-      if (restaurant.id === id) {
-        updatedList.push({ ...restaurant, ...data });
-      } else {
-        updatedList.push(restaurant);
-      }
-    }
-
-    this.saveAll(updatedList);
+    return this.http
+      .patch<Restaurant>(`${API_URL}/restaurants/${id}`, data)
+      .pipe(tap((updated) => this.replaceInList(updated)));
   }
 
   setActive(id: number, isActive: boolean) {
-    const updatedList: Restaurant[] = [];
+    return this.http
+      .patch<Restaurant>(`${API_URL}/restaurants/${id}`, { isActive: isActive })
+      .pipe(tap((updated) => this.replaceInList(updated)));
+  }
 
-    for (const restaurant of this.restaurants()) {
-      if (restaurant.id === id) {
-        updatedList.push({ ...restaurant, isActive: isActive });
-      } else {
-        updatedList.push(restaurant);
+  private replaceInList(updated: Restaurant) {
+    this.listResource.update((list) => {
+      const result: Restaurant[] = [];
+
+      for (const restaurant of list) {
+        result.push(restaurant.id === updated.id ? updated : restaurant);
       }
-    }
 
-    this.saveAll(updatedList);
-  }
-
-  resetToOriginal() {
-    localStorage.removeItem(STORAGE_KEY);
-    this.restaurants.set(restaurantsData as Restaurant[]);
-  }
-
-  private nextId() {
-    let highestId = 0;
-
-    for (const restaurant of this.restaurants()) {
-      if (restaurant.id > highestId) {
-        highestId = restaurant.id;
-      }
-    }
-
-    return highestId + 1;
-  }
-
-  private saveAll(restaurants: Restaurant[]) {
-    this.restaurants.set(restaurants);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(restaurants));
-  }
-
-  private loadFromStorage(): Restaurant[] {
-    const saved = localStorage.getItem(STORAGE_KEY);
-
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        localStorage.removeItem(STORAGE_KEY);
-      }
-    }
-
-    return restaurantsData as Restaurant[];
+      return result;
+    });
   }
 }

@@ -14,7 +14,7 @@ export const cartReadyGuard: CanActivateFn = () => {
     return router.createUrlTree(['/cart']);
   }
 
-  if (!restaurants.getById(restaurant.id)?.isActive) {
+  if (!restaurants.isOpenNow(restaurant)) {
     return router.createUrlTree(['/cart']);
   }
 

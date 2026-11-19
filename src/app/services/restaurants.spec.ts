@@ -1,86 +1,130 @@
 import { TestBed } from '@angular/core/testing';
 import { Restaurants } from './restaurants';
+import { API_URL } from '../api';
+import { RestaurantFormValue } from '../models/restaurant';
+import {
+  answerRestaurantList,
+  failRestaurantList,
+  fakeServer,
+  provideTestApi,
+  seedRestaurants,
+  settle,
+} from '../testing/api-test';
 
-describe('Restaurants service', () => {
+function formValueOf(id: number): RestaurantFormValue {
+  const restaurant = seedRestaurants.find((r) => r.id === id)!;
+  return {
+    name: restaurant.name,
+    description: restaurant.description,
+    address: restaurant.address,
+    cuisine: restaurant.cuisine,
+    imageUrl: restaurant.imageUrl ?? '',
+    deliveryTimeMin: restaurant.deliveryTimeMin,
+    deliveryTimeMax: restaurant.deliveryTimeMax,
+    deliveryFee: restaurant.deliveryFee,
+    minimumOrderValue: restaurant.minimumOrderValue,
+    isActive: restaurant.isActive,
+  };
+}
+
+describe('Restaurants service (API)', () => {
   beforeEach(() => {
-    localStorage.clear();
+    TestBed.configureTestingModule({ providers: provideTestApi() });
   });
 
-  it('should load all 200 restaurants from the JSON file', () => {
+  afterEach(() => {
+    fakeServer().verify();
+  });
+
+  it('should be loading until the API answers, then hold all restaurants (FR-01)', async () => {
     const service = TestBed.inject(Restaurants);
+    TestBed.tick();
+
+    expect(service.isLoading()).toBe(true);
+    expect(service.hasLoaded()).toBe(false);
+
+    fakeServer().expectOne(`${API_URL}/restaurants`).flush(seedRestaurants);
+    await settle();
+
+    expect(service.isLoading()).toBe(false);
+    expect(service.hasLoaded()).toBe(true);
     expect(service.getAll()().length).toBe(200);
-  });
-
-  it('should find a restaurant by id', () => {
-    const service = TestBed.inject(Restaurants);
     expect(service.getById(1)?.name).toBe('Pierogarnia Pod Aniołami');
     expect(service.getById(9999)).toBeUndefined();
   });
 
-  it('should create a restaurant, save it to localStorage and reset back', () => {
+  it('should report an error, and load again after reload (Retry)', async () => {
     const service = TestBed.inject(Restaurants);
-    const created = service.create({
-      name: 'Testowa',
-      description: 'Opis testowej restauracji',
-      address: 'ul. Testowa 1, 00-001 Warszawa',
-      cuisine: service.getById(1)!.cuisine,
-      imageUrl: '',
-      deliveryTimeMin: 10,
-      deliveryTimeMax: 20,
-      deliveryFee: 5,
-      minimumOrderValue: 30,
-      isActive: true,
-    });
+    await failRestaurantList();
 
-    expect(created.id).toBe(201);
+    expect(service.loadFailed()).toBe(true);
+    expect(service.getAll()()).toEqual([]);
+
+    service.reload();
+    TestBed.tick();
+    fakeServer().expectOne(`${API_URL}/restaurants`).flush(seedRestaurants);
+    await settle();
+
+    expect(service.loadFailed()).toBe(false);
+    expect(service.getAll()().length).toBe(200);
+  });
+
+  it('should POST a new restaurant with rating 0 and add the answer to the list', async () => {
+    const service = TestBed.inject(Restaurants);
+    await answerRestaurantList();
+
+    let created: unknown;
+    service.create({ ...formValueOf(1), name: 'Testowa' }).subscribe((answer) => (created = answer));
+
+    const request = fakeServer().expectOne(`${API_URL}/restaurants`);
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body.name).toBe('Testowa');
+    expect(request.request.body.rating).toBe(0);
+    request.flush({ ...request.request.body, id: 201 });
+
+    expect(created).toEqual(expect.objectContaining({ id: 201, name: 'Testowa' }));
     expect(service.getAll()().length).toBe(201);
-
-    const saved = JSON.parse(localStorage.getItem('foodapp-restaurants')!);
-    expect(saved.length).toBe(201);
-
-    service.resetToOriginal();
-    expect(service.getAll()().length).toBe(200);
-    expect(localStorage.getItem('foodapp-restaurants')).toBeNull();
+    expect(service.getById(201)?.name).toBe('Testowa');
   });
 
-  it('should update only the chosen restaurant and keep its id and rating', () => {
+  it('should PATCH an edited restaurant and replace it in the list', async () => {
     const service = TestBed.inject(Restaurants);
-    const before = service.getById(2)!;
+    await answerRestaurantList();
 
-    service.update(2, {
-      name: 'Nowa nazwa',
-      description: before.description,
-      address: before.address,
-      cuisine: before.cuisine,
-      imageUrl: before.imageUrl ?? '',
-      deliveryTimeMin: before.deliveryTimeMin,
-      deliveryTimeMax: before.deliveryTimeMax,
-      deliveryFee: 1,
-      minimumOrderValue: before.minimumOrderValue,
-      isActive: before.isActive,
-    });
+    service.update(2, { ...formValueOf(2), name: 'Nowa nazwa' }).subscribe();
 
-    const after = service.getById(2)!;
-    expect(after.name).toBe('Nowa nazwa');
-    expect(after.deliveryFee).toBe(1);
-    expect(after.id).toBe(2);
-    expect(after.rating).toBe(before.rating);
-    expect(service.getById(1)!.name).toBe('Pierogarnia Pod Aniołami');
+    const request = fakeServer().expectOne(`${API_URL}/restaurants/2`);
+    expect(request.request.method).toBe('PATCH');
+    request.flush({ ...seedRestaurants[1], name: 'Nowa nazwa' });
+
+    expect(service.getById(2)?.name).toBe('Nowa nazwa');
+    expect(service.getById(2)?.rating).toBe(seedRestaurants[1].rating);
     expect(service.getAll()().length).toBe(200);
   });
 
-  it('should deactivate a restaurant, keep all its data, and save it', () => {
+  it('should PATCH only isActive when deactivating', async () => {
     const service = TestBed.inject(Restaurants);
-    const before = service.getById(3)!;
+    await answerRestaurantList();
 
-    service.setActive(3, false);
+    service.setActive(3, false).subscribe();
 
-    const after = service.getById(3)!;
-    expect(after.isActive).toBe(false);
-    expect({ ...after, isActive: true }).toEqual({ ...before, isActive: true });
-    expect(service.getAll()().length).toBe(200);
+    const request = fakeServer().expectOne(`${API_URL}/restaurants/3`);
+    expect(request.request.method).toBe('PATCH');
+    expect(request.request.body).toEqual({ isActive: false });
+    request.flush({ ...seedRestaurants[2], isActive: false });
 
-    const saved = JSON.parse(localStorage.getItem('foodapp-restaurants')!);
-    expect(saved.find((r: { id: number }) => r.id === 3).isActive).toBe(false);
+    expect(service.getById(3)?.isActive).toBe(false);
+  });
+
+  it('should leave the list unchanged when saving fails', async () => {
+    const service = TestBed.inject(Restaurants);
+    await answerRestaurantList();
+
+    let failed = false;
+    service.setActive(3, false).subscribe({ error: () => (failed = true) });
+    fakeServer().expectOne(`${API_URL}/restaurants/3`).flush('down', { status: 503, statusText: 'Unavailable' });
+
+    expect(failed).toBe(true);
+    expect(service.getById(3)?.isActive).toBe(true);
   });
 });

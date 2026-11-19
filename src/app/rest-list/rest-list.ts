@@ -3,15 +3,16 @@ import { FormsModule } from '@angular/forms';
 import { RestCard } from '../rest-card/rest-card';
 import { cuisineOptions, Restaurant } from '../models/restaurant';
 import { Restaurants } from '../services/restaurants';
+import { DataState } from '../data-state/data-state';
 
 @Component({
   selector: 'app-rest-list',
-  imports: [RestCard, FormsModule],
+  imports: [RestCard, FormsModule, DataState],
   templateUrl: './rest-list.html',
   styleUrl: './rest-list.scss',
 })
 export class RestList {
-  private restaurantsService = inject(Restaurants);
+  restaurantsService = inject(Restaurants);
   allRestaurants = this.restaurantsService.getAll();
 
   cuisineOptions = cuisineOptions;

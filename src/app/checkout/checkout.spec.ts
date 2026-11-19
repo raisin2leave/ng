@@ -5,13 +5,14 @@ import { Auth } from '../services/auth';
 import { Cart } from '../services/cart';
 import { Menus } from '../services/menus';
 import { Orders } from '../services/orders';
-import { Restaurants } from '../services/restaurants';
+import { answerRestaurantList, provideTestApi, restaurantFromSeed } from '../testing/api-test';
 import { Users } from '../services/users';
 
 describe('Checkout', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     localStorage.clear();
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    TestBed.configureTestingModule({ providers: [provideRouter([]), ...provideTestApi()] });
+    await answerRestaurantList();
 
     TestBed.inject(Users).registerCustomer({
       name: 'Anna',
@@ -22,7 +23,7 @@ describe('Checkout', () => {
     });
     TestBed.inject(Auth).login('anna@example.com', 'bezpieczne1');
 
-    const restaurant = TestBed.inject(Restaurants).getById(3)!;
+    const restaurant = restaurantFromSeed(3);
     const product = TestBed.inject(Menus).getByCuisine(restaurant.cuisine)!.categories[0].products[0];
     const cart = TestBed.inject(Cart);
     cart.add(restaurant, product);

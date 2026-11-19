@@ -1,7 +1,14 @@
 <div class="details">
   <a routerLink="/" class="back-link">← Wróć do listy restauracji</a>
 
-  @if (restaurant(); as restaurant) {
+  @if (!restaurantsService.hasLoaded()) {
+    <app-data-state
+      [loading]="restaurantsService.isLoading()"
+      [failed]="restaurantsService.loadFailed()"
+      loadingText="Ładowanie restauracji…"
+      (retry)="restaurantsService.reload()"
+    />
+  } @else if (restaurant(); as restaurant) {
     @if (restaurant.imageUrl) {
       <img
         class="details-image"

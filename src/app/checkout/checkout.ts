@@ -124,7 +124,7 @@ export class Checkout implements OnInit {
       return;
     }
 
-    if (!this.restaurantsService.getById(restaurant.id)?.isActive) {
+    if (!this.restaurantsService.isOpenNow(restaurant)) {
       this.problem.set('Ta restauracja jest teraz nieczynna — nie można złożyć zamówienia.');
       return;
     }

@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { DataState } from '../data-state/data-state';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { cuisineOptions, Restaurant } from '../models/restaurant';
@@ -6,13 +7,14 @@ import { Restaurants } from '../services/restaurants';
 
 @Component({
   selector: 'app-admin-list',
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, DataState],
   templateUrl: './admin-list.html',
   styleUrl: './admin-list.scss',
 })
 export class AdminList {
-  private restaurantsService = inject(Restaurants);
+  restaurantsService = inject(Restaurants);
   restaurants = this.restaurantsService.getAll();
+  saveError = signal('');
 
   searchText = signal('');
   statusFilter = signal('all');
@@ -102,17 +104,19 @@ export class AdminList {
 
   deactivate(restaurant: Restaurant) {
     if (confirm(`Czy na pewno chcesz dezaktywować restaurację „${restaurant.name}”?`)) {
-      this.restaurantsService.setActive(restaurant.id, false);
+      this.changeActive(restaurant, false);
     }
   }
 
   activate(restaurant: Restaurant) {
-    this.restaurantsService.setActive(restaurant.id, true);
+    this.changeActive(restaurant, true);
   }
 
-  resetData() {
-    if (confirm('Usunąć wszystkie zmiany i przywrócić oryginalne dane?')) {
-      this.restaurantsService.resetToOriginal();
-    }
+  private changeActive(restaurant: Restaurant, isActive: boolean) {
+    this.saveError.set('');
+
+    this.restaurantsService.setActive(restaurant.id, isActive).subscribe({
+      error: () => this.saveError.set(`Nie udało się zapisać zmiany dla „${restaurant.name}”. Spróbuj ponownie.`),
+    });
   }
 }
