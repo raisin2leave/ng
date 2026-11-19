@@ -1,0 +1,76 @@
+.order-view {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.meta {
+  color: #6c757d;
+}
+
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.steps li {
+  padding: 6px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 20px;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.steps li.done {
+  border-color: #198754;
+  color: #198754;
+}
+
+.steps li.done::before {
+  content: '✓ ';
+}
+
+.steps li.current {
+  border-color: #0d6efd;
+  background: #0d6efd;
+  color: white;
+  font-weight: bold;
+}
+
+.totals {
+  max-width: 320px;
+  margin: 0 0 0 auto;
+}
+
+.totals div {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.totals dt {
+  font-weight: normal;
+}
+
+.totals dd {
+  margin: 0;
+}
+
+.to-pay {
+  border-top: 1px solid #ddd;
+  margin-top: 4px;
+  padding-top: 6px;
+  font-weight: bold;
+}

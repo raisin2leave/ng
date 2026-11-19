@@ -22,6 +22,28 @@ export class Orders {
     return this.orders.asReadonly();
   }
 
+  getById(id: number) {
+    for (const order of this.orders()) {
+      if (order.id === id) {
+        return order;
+      }
+    }
+
+    return undefined;
+  }
+
+  getForUser(userId: string) {
+    const result: Order[] = [];
+
+    for (const order of this.orders()) {
+      if (order.userId === userId) {
+        result.push(order);
+      }
+    }
+
+    return newestFirst(result);
+  }
+
   placeOrder(userId: string, cart: CartSnapshot, checkout: CheckoutData) {
     const items: OrderItem[] = [];
 
@@ -82,4 +104,8 @@ export class Orders {
 
     return [];
   }
+}
+
+export function newestFirst(orders: Order[]) {
+  return [...orders].sort((a, b) => b.id - a.id);
 }

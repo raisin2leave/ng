@@ -1,0 +1,44 @@
+import { TestBed } from '@angular/core/testing';
+import { CheckoutData } from '../models/order';
+import { Auth } from '../services/auth';
+import { Menus } from '../services/menus';
+import { Orders } from '../services/orders';
+import { Restaurants } from '../services/restaurants';
+import { Users } from '../services/users';
+
+export const testCheckout: CheckoutData = {
+  contact: { firstName: 'Anna', lastName: 'Nowak', email: 'anna@example.com', phone: '600100200' },
+  deliveryAddress: { street: 'Prosta', buildingNumber: '12', apartmentNumber: '4', postalCode: '00-950', city: 'Warszawa' },
+  paymentMethod: 'online',
+};
+
+export function createCustomer(name: string, email: string) {
+  return TestBed.inject(Users).registerCustomer({
+    name: name,
+    email: email,
+    password: 'bezpieczne1',
+    phone: '600100200',
+    deliveryAddress: { street: 'Prosta', buildingNumber: '1', postalCode: '00-001', city: 'Warszawa' },
+  })!;
+}
+
+export function logIn(email: string) {
+  TestBed.inject(Auth).login(email, 'bezpieczne1');
+}
+
+export function placeTestOrder(userId: string, restaurantId = 3) {
+  const restaurant = TestBed.inject(Restaurants).getById(restaurantId)!;
+  const product = TestBed.inject(Menus).getByCuisine(restaurant.cuisine)!.categories[0].products[0];
+
+  return TestBed.inject(Orders).placeOrder(
+    userId,
+    {
+      restaurant: restaurant,
+      items: [{ product: product, quantity: 2 }],
+      subtotal: product.price * 2,
+      deliveryFee: restaurant.deliveryFee,
+      total: product.price * 2 + restaurant.deliveryFee,
+    },
+    testCheckout,
+  );
+}

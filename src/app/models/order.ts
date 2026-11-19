@@ -69,6 +69,22 @@ export function statusLabel(status: OrderStatus) {
   return status;
 }
 
+export function statusBadgeClass(status: OrderStatus) {
+  if (status === 'delivered') {
+    return 'text-bg-success';
+  }
+
+  if (status === 'cancelled') {
+    return 'text-bg-secondary';
+  }
+
+  if (status === 'new') {
+    return 'text-bg-primary';
+  }
+
+  return 'text-bg-warning';
+}
+
 export function paymentLabel(method: PaymentMethod) {
   for (const option of paymentMethods) {
     if (option.value === method) {

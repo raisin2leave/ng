@@ -7,7 +7,8 @@
         Kwota do zapłaty: <strong>{{ order.total.toFixed(2) }} zł</strong> ·
         Status: <strong>Nowe</strong>
       </p>
-      <a routerLink="/" class="btn btn-success">Wróć do restauracji</a>
+      <a [routerLink]="['/orders', order.id]" class="btn btn-success">Zobacz szczegóły zamówienia</a>
+      <a routerLink="/" class="btn btn-outline-success ms-2">Wróć do restauracji</a>
     </div>
   } @else {
     <a routerLink="/cart" class="back-link">← Wróć do koszyka</a>

@@ -1,0 +1,39 @@
+<div class="orders-page">
+  <h1>Moje zamówienia</h1>
+
+  @if (myOrders().length > 0) {
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th scope="col">Nr</th>
+          <th scope="col">Data</th>
+          <th scope="col">Restauracja</th>
+          <th scope="col" class="text-end">Kwota</th>
+          <th scope="col">Status</th>
+          <th scope="col"><span class="visually-hidden">Akcje</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (order of myOrders(); track order.id) {
+          <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.createdAt | date: 'dd.MM.yyyy, HH:mm' }}</td>
+            <td>{{ order.restaurantName }}</td>
+            <td class="text-end">{{ order.total.toFixed(2) }} zł</td>
+            <td>
+              <span class="badge" [class]="statusBadgeClass(order.status)">{{ statusLabel(order.status) }}</span>
+            </td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-primary" [routerLink]="['/orders', order.id]">
+                Szczegóły<span class="visually-hidden"> zamówienia {{ order.id }}</span>
+              </a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p class="empty">Nie masz jeszcze żadnych zamówień.</p>
+    <a routerLink="/" class="btn btn-primary">Wybierz restaurację</a>
+  }
+</div>

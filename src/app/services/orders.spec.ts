@@ -61,4 +61,16 @@ describe('Orders service', () => {
     expect(service.getAll()()[0].items[0].price).toBe(29.99);
     expect(order.items[0].price).toBe(29.99);
   });
+
+  it('should find one order by number, and the orders of one user, newest first', () => {
+    const service = TestBed.inject(Orders);
+    service.placeOrder('anna', cartSnapshot(), checkoutData);
+    service.placeOrder('bartek', cartSnapshot(), checkoutData);
+    service.placeOrder('anna', cartSnapshot(), checkoutData);
+
+    expect(service.getById(1002)?.userId).toBe('bartek');
+    expect(service.getById(9999)).toBeUndefined();
+    expect(service.getForUser('anna').map((order) => order.id)).toEqual([1003, 1001]);
+    expect(service.getForUser('nikt')).toEqual([]);
+  });
 });

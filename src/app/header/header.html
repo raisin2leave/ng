@@ -19,6 +19,7 @@
     }
 
     @if (currentUser(); as user) {
+      <a routerLink="/orders" routerLinkActive="active">Moje zamówienia</a>
       <a routerLink="/profile" routerLinkActive="active" class="user-info" title="Mój profil">
         Zalogowano: <strong>{{ user.name }}</strong>
         @if (user.role === 'admin') {
