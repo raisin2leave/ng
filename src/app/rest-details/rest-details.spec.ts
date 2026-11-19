@@ -103,7 +103,13 @@ describe('RestDetails', () => {
     it('should cancel the current order and start a new one with the new product', () => {
       const { fixture, page, cart, dialogButton } = openRestaurantWithForeignCart();
 
-      dialogButton('Anuluj bieżące zamówienie i dodaj nowe').click();
+      const buttonTexts = [...page.querySelectorAll('.dialog-box button')].map((b) => b.textContent?.trim());
+      expect(buttonTexts).toEqual([
+        'Anuluj dodawanie nowego produktu',
+        'Anuluj bieżące zamówienie i dodaj nowe zamówienie',
+      ]);
+
+      dialogButton('Anuluj bieżące zamówienie i dodaj nowe zamówienie').click();
       fixture.detectChanges();
 
       expect(page.querySelector('[role="alertdialog"]')).toBeNull();

@@ -10,7 +10,7 @@
       🛒 Koszyk
       @if (cartCount() > 0) {
         <span class="badge rounded-pill text-bg-primary">{{ cartCount() }}</span>
-        <span class="visually-hidden">produktów</span>
+        <span class="visually-hidden">{{ cartCountWord() }}</span>
       }
     </a>
 

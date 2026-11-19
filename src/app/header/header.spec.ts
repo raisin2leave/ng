@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { Header } from './header';
+import { Header, productWord } from './header';
 import { Auth } from '../services/auth';
 import { Users } from '../services/users';
 import { Cart } from '../services/cart';
@@ -81,5 +81,23 @@ describe('Header', () => {
     fixture.detectChanges();
 
     expect(page.querySelector('.cart-link .badge')?.textContent).toBe('2');
+    expect(page.querySelector('.cart-link .visually-hidden')?.textContent).toBe('produkty');
+  });
+
+  it('should use the correct Polish form of "produkt"', () => {
+    const forms = [1, 2, 4, 5, 11, 12, 14, 21, 22, 25, 99].map((n) => `${n} ${productWord(n)}`);
+    expect(forms).toEqual([
+      '1 produkt',
+      '2 produkty',
+      '4 produkty',
+      '5 produktów',
+      '11 produktów',
+      '12 produktów',
+      '14 produktów',
+      '21 produktów',
+      '22 produkty',
+      '25 produktów',
+      '99 produktów',
+    ]);
   });
 });

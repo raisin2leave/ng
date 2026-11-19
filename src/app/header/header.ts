@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Auth } from '../services/auth';
 import { Cart } from '../services/cart';
@@ -16,9 +16,25 @@ export class Header {
   currentUser = this.auth.currentUser;
   isAdmin = this.auth.isAdmin;
   cartCount = inject(Cart).itemCount;
+  cartCountWord = computed(() => productWord(this.cartCount()));
 
   logOut() {
     this.auth.logout();
     this.router.navigate(['/']);
   }
+}
+
+export function productWord(count: number) {
+  const lastDigit = count % 10;
+  const lastTwoDigits = count % 100;
+
+  if (count === 1) {
+    return 'produkt';
+  }
+
+  if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 12 || lastTwoDigits > 14)) {
+    return 'produkty';
+  }
+
+  return 'produktów';
 }
