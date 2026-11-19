@@ -11,6 +11,8 @@ export type CartSnapshot = {
   items: CartItem[];
   subtotal: number;
   deliveryFee: number;
+  discountCode?: string;
+  discount?: number;
   total: number;
 };
 
@@ -66,6 +68,8 @@ export class Orders {
       items: items,
       subtotal: cart.subtotal,
       deliveryFee: cart.deliveryFee,
+      discountCode: cart.discountCode,
+      discount: cart.discount ?? 0,
       total: cart.total,
       status: 'new',
     };

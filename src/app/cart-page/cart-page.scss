@@ -92,3 +92,22 @@
   margin-top: 24px;
   text-align: right;
 }
+
+.discount {
+  max-width: 420px;
+  margin: 0 0 20px auto;
+}
+
+.code-form {
+  display: flex;
+  gap: 8px;
+}
+
+.applied-code .btn-link {
+  padding: 0 0 0 6px;
+  vertical-align: baseline;
+}
+
+.discount-row {
+  color: #198754;
+}

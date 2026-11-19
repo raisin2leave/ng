@@ -55,6 +55,42 @@
       }
     </ul>
 
+    <section class="discount" aria-labelledby="discount-title">
+      <h2 id="discount-title" class="h6">Kod rabatowy</h2>
+
+      @if (cart.discountCode(); as code) {
+        <p class="applied-code mb-1">
+          <span class="badge text-bg-success">{{ code.code }}</span>
+          {{ code.description }}
+          <button type="button" class="btn btn-link btn-sm" (click)="removeCode()">Usuń kod</button>
+        </p>
+        @if (cart.discountMissingAmount() > 0) {
+          <p class="text-warning-emphasis mb-0" role="status">
+            Kod zadziała od {{ code.minimumSubtotal.toFixed(2) }} zł — brakuje
+            {{ cart.discountMissingAmount().toFixed(2) }} zł.
+          </p>
+        }
+      } @else {
+        <form class="code-form" (submit)="applyCode($event)" novalidate>
+          <label for="discount-code" class="visually-hidden">Kod rabatowy</label>
+          <input
+            id="discount-code"
+            name="discountCode"
+            type="text"
+            class="form-control"
+            placeholder="np. WITAJ10"
+            autocomplete="off"
+            [class.is-invalid]="codeError() !== ''"
+            [(ngModel)]="codeText"
+          >
+          <button type="submit" class="btn btn-outline-primary">Zastosuj</button>
+        </form>
+        @if (codeError()) {
+          <div class="invalid-feedback d-block" role="alert">{{ codeError() }}</div>
+        }
+      }
+    </section>
+
     <dl class="summary">
       <div>
         <dt>Suma zamówienia</dt>
@@ -64,6 +100,12 @@
         <dt>Koszt dostawy</dt>
         <dd>{{ cart.deliveryFee().toFixed(2) }} zł</dd>
       </div>
+      @if (cart.discount() > 0) {
+        <div class="discount-row">
+          <dt>Rabat ({{ cart.discountCode()?.code }})</dt>
+          <dd>−{{ cart.discount().toFixed(2) }} zł</dd>
+        </div>
+      }
       <div class="to-pay">
         <dt>Kwota do zapłaty</dt>
         <dd>{{ cart.total().toFixed(2) }} zł</dd>

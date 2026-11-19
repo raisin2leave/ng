@@ -55,6 +55,8 @@ export type Order = CheckoutData & {
   items: OrderItem[];
   subtotal: number;
   deliveryFee: number;
+  discountCode?: string;
+  discount?: number;
   total: number;
   status: OrderStatus;
 };

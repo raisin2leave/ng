@@ -68,4 +68,15 @@ describe('OrderView', () => {
     expect(page.querySelector('.steps')).toBeNull();
     expect(page.textContent).toContain('To zamówienie zostało anulowane.');
   });
+
+  it('should show the discount line only when the order had a discount', () => {
+    expect(show('new').querySelector('.discount-row')).toBeNull();
+
+    const fixture = TestBed.createComponent(OrderView);
+    fixture.componentRef.setInput('order', { ...testOrder, discountCode: 'WITAJ10', discount: 7.5, total: 73.97 });
+    fixture.detectChanges();
+    const row = (fixture.nativeElement as HTMLElement).querySelector('.discount-row');
+
+    expect(row?.textContent?.replace(/\s+/g, '')).toBe('Rabat(WITAJ10)−7.50zł');
+  });
 });

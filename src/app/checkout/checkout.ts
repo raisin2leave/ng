@@ -142,6 +142,8 @@ export class Checkout implements OnInit {
         items: this.cart.items(),
         subtotal: this.cart.subtotal(),
         deliveryFee: this.cart.deliveryFee(),
+        discountCode: this.cart.discount() > 0 ? this.cart.discountCode()?.code : undefined,
+        discount: this.cart.discount(),
         total: this.cart.total(),
       },
       {

@@ -1,4 +1,5 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Cart, MAX_QUANTITY } from '../services/cart';
 import { Restaurants } from '../services/restaurants';
@@ -6,7 +7,7 @@ import { CartItem } from '../models/cart';
 
 @Component({
   selector: 'app-cart-page',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './cart-page.html',
   styleUrl: './cart-page.scss',
 })
@@ -15,6 +16,30 @@ export class CartPage {
   private restaurantsService = inject(Restaurants);
 
   maxQuantity = MAX_QUANTITY;
+
+  codeText = signal('');
+  codeError = signal('');
+
+  applyCode(event: Event) {
+    event.preventDefault();
+
+    if (this.codeText().trim() === '') {
+      this.codeError.set('Wpisz kod rabatowy.');
+      return;
+    }
+
+    if (!this.cart.applyDiscountCode(this.codeText())) {
+      this.codeError.set('Nieprawidłowy kod rabatowy.');
+      return;
+    }
+
+    this.codeText.set('');
+    this.codeError.set('');
+  }
+
+  removeCode() {
+    this.cart.removeDiscountCode();
+  }
 
   restaurantIsOpen = computed(() => {
     const restaurant = this.cart.restaurant();

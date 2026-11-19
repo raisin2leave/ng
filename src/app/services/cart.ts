@@ -1,5 +1,6 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { AddToCartResult, CartItem } from '../models/cart';
+import { DiscountCode, findDiscountCode } from '../models/discount';
 import { Product } from '../models/menu';
 import { Restaurant } from '../models/restaurant';
 
@@ -9,9 +10,11 @@ export const MAX_QUANTITY = 99;
 export class Cart {
   private restaurantSignal = signal<Restaurant | undefined>(undefined);
   private itemsSignal = signal<CartItem[]>([]);
+  private discountSignal = signal<DiscountCode | undefined>(undefined);
 
   restaurant = this.restaurantSignal.asReadonly();
   items = this.itemsSignal.asReadonly();
+  discountCode = this.discountSignal.asReadonly();
 
   isEmpty = computed(() => this.items().length === 0);
 
@@ -45,7 +48,50 @@ export class Cart {
     return restaurant.deliveryFee;
   });
 
-  total = computed(() => roundMoney(this.subtotal() + this.deliveryFee()));
+  discountMissingAmount = computed(() => {
+    const discount = this.discountCode();
+
+    if (!discount || this.subtotal() >= discount.minimumSubtotal) {
+      return 0;
+    }
+
+    return roundMoney(discount.minimumSubtotal - this.subtotal());
+  });
+
+  discount = computed(() => {
+    const discount = this.discountCode();
+
+    if (!discount || this.isEmpty() || this.discountMissingAmount() > 0) {
+      return 0;
+    }
+
+    if (discount.kind === 'percent-off-products') {
+      return roundMoney((this.subtotal() * discount.value) / 100);
+    }
+
+    if (discount.kind === 'free-delivery') {
+      return this.deliveryFee();
+    }
+
+    return Math.min(discount.value, this.subtotal());
+  });
+
+  total = computed(() => roundMoney(this.subtotal() + this.deliveryFee() - this.discount()));
+
+  applyDiscountCode(text: string) {
+    const discount = findDiscountCode(text);
+
+    if (!discount) {
+      return false;
+    }
+
+    this.discountSignal.set(discount);
+    return true;
+  }
+
+  removeDiscountCode() {
+    this.discountSignal.set(undefined);
+  }
 
   add(restaurant: Restaurant, product: Product): AddToCartResult {
     if (!restaurant.isActive) {
@@ -118,12 +164,14 @@ export class Cart {
 
     if (remaining.length === 0) {
       this.restaurantSignal.set(undefined);
+      this.discountSignal.set(undefined);
     }
   }
 
   clear() {
     this.itemsSignal.set([]);
     this.restaurantSignal.set(undefined);
+    this.discountSignal.set(undefined);
   }
 
   private findItem(productId: number) {

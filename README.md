@@ -10,6 +10,16 @@ Aplikacja startuje z jednym kontem administratora (dane testowe, tylko do zaję�
 W `src/app/data/users.json` zapisany jest wyłącznie skrót (hash bcrypt) hasła, nie samo hasło.
 Hasło można zmienić w aplikacji (Panel admina → Użytkownicy → reset hasła).
 
+## Kody rabatowe (Lab 6 — zadanie dodatkowe)
+
+Kod wpisuje się w koszyku. Wielkość liter nie ma znaczenia.
+
+| Kod | Rabat |
+|---|---|
+| `WITAJ10` | 10% zniżki na produkty |
+| `DARMOWADOSTAWA` | darmowa dostawa |
+| `MINUS20` | 20 zł zniżki przy zamówieniu od 80 zł |
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.24.
 
 ## Development server

@@ -133,4 +133,17 @@ describe('Checkout', () => {
     expect(TestBed.inject(Cart).isEmpty()).toBe(true);
     expect(page.textContent).toContain('Zamówienie nr 1001 zostało złożone');
   });
+
+  it('should save the discount code and amount with the order', () => {
+    TestBed.inject(Cart).applyDiscountCode('DARMOWADOSTAWA');
+    const { fixture, page } = createPage();
+    typeInto(page, '#co-last-name', 'Nowak');
+    typeInto(page, '#co-payment', 'online');
+    send(fixture, page);
+
+    const order = TestBed.inject(Orders).getAll()()[0];
+    expect(order.discountCode).toBe('DARMOWADOSTAWA');
+    expect(order.discount).toBe(6.5);
+    expect(order.total).toBe(59.98);
+  });
 });

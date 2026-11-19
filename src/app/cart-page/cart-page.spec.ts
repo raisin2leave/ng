@@ -133,4 +133,36 @@ describe('CartPage', () => {
       expect(page.textContent).toContain('Ta restauracja jest teraz nieczynna');
     });
   });
+
+  describe('discount code (bonus)', () => {
+    async function openWithCode() {
+      const opened = fillCartAndOpenPage();
+      await opened.fixture.whenStable();
+      const typeCode = (code: string) => {
+        const field = opened.page.querySelector<HTMLInputElement>('#discount-code')!;
+        field.value = code;
+        field.dispatchEvent(new Event('input'));
+        opened.page.querySelector<HTMLFormElement>('.code-form')!.dispatchEvent(new Event('submit'));
+        opened.fixture.detectChanges();
+      };
+      return { ...opened, typeCode };
+    }
+
+    it('should tell the user when the code is wrong', async () => {
+      const { page, typeCode } = await openWithCode();
+      typeCode('ZLYKOD');
+      expect(page.textContent).toContain('Nieprawidłowy kod rabatowy.');
+    });
+
+    it('should apply a code and show the discount in the summary', async () => {
+      const { page, cart, typeCode } = await openWithCode();
+      typeCode('witaj10');
+
+      expect(page.querySelector('.applied-code')?.textContent).toContain('WITAJ10');
+      expect(page.querySelector('.discount-row')?.textContent?.replace(/\s+/g, '')).toBe(
+        `Rabat(WITAJ10)−${cart.discount().toFixed(2)}zł`,
+      );
+      expect(cart.total()).toBe(Math.round((cart.subtotal() + cart.deliveryFee() - cart.discount()) * 100) / 100);
+    });
+  });
 });

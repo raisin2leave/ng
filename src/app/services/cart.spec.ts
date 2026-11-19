@@ -151,4 +151,70 @@ describe('Cart service', () => {
     expect(cart.restaurant()?.id).toBe(2);
     expect(cart.deliveryFee()).toBe(0);
   });
+
+  describe('discount codes (bonus)', () => {
+    it('should refuse an unknown code and accept a known one in any letter case', () => {
+      const cart = TestBed.inject(Cart);
+      cart.add(pierogarnia, pierogi);
+
+      expect(cart.applyDiscountCode('NIEMA')).toBe(false);
+      expect(cart.discountCode()).toBeUndefined();
+
+      expect(cart.applyDiscountCode('  witaj10 ')).toBe(true);
+      expect(cart.discountCode()?.code).toBe('WITAJ10');
+    });
+
+    it('WITAJ10 should take 10% off the products, not the delivery', () => {
+      const cart = TestBed.inject(Cart);
+      cart.add(pierogarnia, pierogi);
+      cart.add(pierogarnia, zurek);
+      cart.applyDiscountCode('WITAJ10');
+
+      expect(cart.subtotal()).toBe(42.5);
+      expect(cart.discount()).toBe(4.25);
+      expect(cart.total()).toBe(47.24);
+    });
+
+    it('DARMOWADOSTAWA should remove the delivery fee', () => {
+      const cart = TestBed.inject(Cart);
+      cart.add(pierogarnia, pierogi);
+      cart.applyDiscountCode('DARMOWADOSTAWA');
+
+      expect(cart.discount()).toBe(8.99);
+      expect(cart.total()).toBe(24.5);
+    });
+
+    it('MINUS20 should work only from 80 zł and say how much is missing', () => {
+      const cart = TestBed.inject(Cart);
+      cart.add(pierogarnia, pierogi);
+      cart.applyDiscountCode('MINUS20');
+
+      expect(cart.discount()).toBe(0);
+      expect(cart.discountMissingAmount()).toBe(55.5);
+
+      cart.setQuantity(pierogi.id, 4);
+      expect(cart.subtotal()).toBe(98);
+      expect(cart.discountMissingAmount()).toBe(0);
+      expect(cart.discount()).toBe(20);
+      expect(cart.total()).toBe(86.99);
+    });
+
+    it('should forget the code when the code is removed or the cart is emptied', () => {
+      const cart = TestBed.inject(Cart);
+      cart.add(pierogarnia, pierogi);
+      cart.applyDiscountCode('WITAJ10');
+
+      cart.removeDiscountCode();
+      expect(cart.discount()).toBe(0);
+
+      cart.applyDiscountCode('WITAJ10');
+      cart.remove(pierogi.id);
+      expect(cart.discountCode()).toBeUndefined();
+
+      cart.add(pierogarnia, pierogi);
+      cart.applyDiscountCode('WITAJ10');
+      cart.replaceWith(pizzeria, zurek);
+      expect(cart.discountCode()).toBeUndefined();
+    });
+  });
 });
