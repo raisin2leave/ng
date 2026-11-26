@@ -4,8 +4,7 @@ import { Header, productWord } from './header';
 import { Auth } from '../services/auth';
 import { Users } from '../services/users';
 import { Cart } from '../services/cart';
-import { restaurantFromSeed } from '../testing/api-test';
-import { Menus } from '../services/menus';
+import { restaurantFromSeed, productFromSeed } from '../testing/api-test';
 
 describe('Header', () => {
   beforeEach(() => {
@@ -74,7 +73,7 @@ describe('Header', () => {
     expect(page.querySelector('.cart-link .badge')).toBeNull();
 
     const restaurant = restaurantFromSeed(1);
-    const product = TestBed.inject(Menus).getByCuisine(restaurant.cuisine)!.categories[0].products[0];
+    const product = productFromSeed(restaurant.id);
     const cart = TestBed.inject(Cart);
     cart.add(restaurant, product);
     cart.add(restaurant, product);

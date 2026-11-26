@@ -1,15 +1,15 @@
 <div class="form-page">
-  <a [routerLink]="['/admin/menus', cuisine()]" class="back-link">← Wróć do menu</a>
+  <a [routerLink]="['/admin/menus', restaurantId()]" class="back-link">← Wróć do menu</a>
 
   @if (notFound()) {
     <p class="not-found">Nie znaleziono produktu ani kategorii.</p>
-  } @else {
-    @if (productId() === undefined) {
-      <h1>Nowy produkt</h1>
-    } @else {
+  } @else if (category(); as category) {
+    @if (isEditing()) {
       <h1>Edytuj produkt</h1>
+    } @else {
+      <h1>Nowy produkt</h1>
     }
-    <p class="category-info">Kategoria: <strong>{{ categoryName() }}</strong></p>
+    <p class="category-info">Kategoria: <strong>{{ category.name }}</strong></p>
 
     <form class="row g-3" (submit)="save($event)" novalidate>
 
@@ -84,11 +84,27 @@
         @if (triedToSave() && productForm().invalid()) {
           <p class="text-danger" role="alert">Popraw błędy w formularzu, aby zapisać.</p>
         }
-        <button type="submit" class="btn btn-primary">Zapisz</button>
-        <a [routerLink]="['/admin/menus', cuisine()]" class="btn btn-outline-secondary ms-2">Anuluj</a>
+        @if (saveError()) {
+          <p class="alert alert-danger" role="alert">{{ saveError() }}</p>
+        }
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">
+          @if (saving()) {
+            Zapisywanie…
+          } @else {
+            Zapisz
+          }
+        </button>
+        <a [routerLink]="['/admin/menus', restaurantId()]" class="btn btn-outline-secondary ms-2">Anuluj</a>
         <p class="hint">* pole wymagane</p>
       </div>
 
     </form>
+  } @else {
+    <app-data-state
+      [loading]="isLoading()"
+      [failed]="loadFailed()"
+      loadingText="Ładowanie produktu…"
+      (retry)="reload()"
+    />
   }
 </div>

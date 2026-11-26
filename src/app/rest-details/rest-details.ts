@@ -32,15 +32,9 @@ export class RestDetails {
 
   loadFailed = computed(() => this.restaurantResource.error() !== undefined && !this.notFound());
 
-  menu = computed(() => {
-    const restaurant = this.restaurant();
+  menuResource = this.menusService.loadForRestaurant(() => Number(this.id()));
 
-    if (!restaurant) {
-      return undefined;
-    }
-
-    return this.menusService.getByCuisine(restaurant.cuisine);
-  });
+  menuLoadFailed = computed(() => this.menuResource.error() !== undefined);
 
   isCartFromThisRestaurant = computed(() => this.cart.restaurant()?.id === this.restaurant()?.id);
 

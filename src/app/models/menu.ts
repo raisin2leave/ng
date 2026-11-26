@@ -1,7 +1,6 @@
-import { CuisineType } from './restaurant';
-
 export type Product = {
   id: number;
+  categoryId: number;
   name: string;
   description: string;
   price: number;
@@ -17,12 +16,22 @@ export type ProductFormValue = {
   isAvailable: boolean;
 };
 
-export type MenuCategory = {
+export type Category = {
+  id: number;
+  menuId: number;
   name: string;
+};
+
+export type MenuCategory = Category & {
   products: Product[];
 };
 
-export type Menu = {
-  cuisine: CuisineType;
+export type MenuInfo = {
+  id: number;
+  restaurantId: number;
+  name: string;
+};
+
+export type Menu = MenuInfo & {
   categories: MenuCategory[];
 };

@@ -3,8 +3,7 @@ import { provideRouter } from '@angular/router';
 import { RestDetails } from './rest-details';
 import { Cart } from '../services/cart';
 import { API_URL } from '../api';
-import { answerRestaurantList, fakeServer, provideTestApi, restaurantFromSeed, settle } from '../testing/api-test';
-import { Menus } from '../services/menus';
+import { answerMenu, answerRestaurantList, fakeServer, provideTestApi, restaurantFromSeed, settle, productFromSeed } from '../testing/api-test';
 
 describe('RestDetails', () => {
   beforeEach(async () => {
@@ -18,7 +17,7 @@ describe('RestDetails', () => {
     fixture.detectChanges();
     TestBed.tick();
     fakeServer().expectOne(`${API_URL}/restaurants/${id}`).flush(restaurantFromSeed(id));
-    await settle();
+    await answerMenu(id);
     fixture.detectChanges();
     const page: HTMLElement = fixture.nativeElement;
     return { fixture, page };
@@ -30,7 +29,7 @@ describe('RestDetails', () => {
     expect(page.textContent).toContain('Warszawa');
   });
 
-  it('should show the menu of the restaurant cuisine, divided into categories', async () => {
+  it('should show the menu of the restaurant from the API, divided into categories', async () => {
     const { fixture, page } = await openDetails(1);
     const categories = [...page.querySelectorAll('.menu-category h3')].map((h) => h.textContent);
     expect(categories).toEqual(['Zupy', 'Pierogi', 'Dania główne', 'Desery']);
@@ -65,7 +64,7 @@ describe('RestDetails', () => {
     async function openRestaurantWithForeignCart() {
         const cart = TestBed.inject(Cart);
       const otherRestaurant = restaurantFromSeed(2);
-      const otherProduct = TestBed.inject(Menus).getByCuisine(otherRestaurant.cuisine)!.categories[0].products[0];
+      const otherProduct = productFromSeed(otherRestaurant.id);
       cart.add(otherRestaurant, otherProduct);
 
       const { fixture, page } = await openDetails(1);
@@ -169,6 +168,63 @@ describe('RestDetails', () => {
 
       expect(page.querySelector('[role="alert"]')).toBeNull();
       expect(page.querySelector('h1')?.textContent).toBe('Smash Burger Co.');
+    });
+  });
+
+  describe('menu from the API (Lab 7 FR-03)', () => {
+    async function openWithRestaurantLoaded(id = 3) {
+      const fixture = TestBed.createComponent(RestDetails);
+      fixture.componentRef.setInput('id', String(id));
+      fixture.detectChanges();
+      TestBed.tick();
+      fakeServer().expectOne(`${API_URL}/restaurants/${id}`).flush(restaurantFromSeed(id));
+      await settle();
+      fixture.detectChanges();
+      const page: HTMLElement = fixture.nativeElement;
+      return { fixture, page };
+    }
+
+    it('Loading: should show the restaurant while its menu is still loading', async () => {
+      const { page } = await openWithRestaurantLoaded();
+
+      expect(page.querySelector('h1')?.textContent).toBe('Smash Burger Co.');
+      expect(page.querySelector('[role="status"]')?.textContent).toContain('Ładowanie menu…');
+    });
+
+    it('Empty: should say that the restaurant has no menu yet', async () => {
+      const { fixture, page } = await openWithRestaurantLoaded();
+      fakeServer().expectOne(`${API_URL}/restaurants/3/menus`).flush([]);
+      await settle();
+      fixture.detectChanges();
+
+      expect(page.textContent).toContain('Ta restauracja nie ma jeszcze menu.');
+    });
+
+    it('Empty: should say that the menu has no categories', async () => {
+      const { fixture, page } = await openWithRestaurantLoaded();
+      fakeServer().expectOne(`${API_URL}/restaurants/3/menus`).flush([{ id: 3, restaurantId: 3, name: 'Menu' }]);
+      fakeServer().expectOne(`${API_URL}/menus/3/categories`).flush([]);
+      await settle();
+      fixture.detectChanges();
+
+      expect(page.textContent).toContain('Menu tej restauracji jest puste.');
+    });
+
+    it('Error: should show "Unable to load data." for the menu and load it again after Retry', async () => {
+      const { fixture, page } = await openWithRestaurantLoaded();
+      fakeServer().expectOne(`${API_URL}/restaurants/3/menus`).flush('down', { status: 500, statusText: 'Server Error' });
+      await settle();
+      fixture.detectChanges();
+
+      expect(page.querySelector('h1')?.textContent).toBe('Smash Burger Co.');
+      expect(page.querySelector('[role="alert"]')?.textContent).toContain('Unable to load data.');
+
+      page.querySelector<HTMLButtonElement>('[role="alert"] button')!.click();
+      await answerMenu(3);
+      fixture.detectChanges();
+
+      expect(page.querySelector('[role="alert"]')).toBeNull();
+      expect(page.querySelectorAll('app-product-card').length).toBe(10);
     });
   });
 });

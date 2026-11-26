@@ -62,24 +62,37 @@
 
     <h2 class="menu-title">Menu</h2>
 
-    @if (menu(); as menu) {
-      @for (category of menu.categories; track category.name) {
-        <section class="menu-category">
-          <h3>{{ category.name }}</h3>
+    @if (menuResource.hasValue()) {
+      @if (menuResource.value(); as menu) {
+        @for (category of menu.categories; track category.id) {
+          <section class="menu-category">
+            <h3>{{ category.name }}</h3>
 
-          <div class="product-grid">
-            @for (product of category.products; track product.id) {
-              <app-product-card
-                [product]="product"
-                [canOrder]="restaurant.isActive"
-                (addToCart)="addToCart($event)"
-              />
-            }
-          </div>
-        </section>
+            <div class="product-grid">
+              @for (product of category.products; track product.id) {
+                <app-product-card
+                  [product]="product"
+                  [canOrder]="restaurant.isActive"
+                  (addToCart)="addToCart($event)"
+                />
+              } @empty {
+                <p class="empty-info">Brak produktów w tej kategorii.</p>
+              }
+            </div>
+          </section>
+        } @empty {
+          <p class="empty-info">Menu tej restauracji jest puste.</p>
+        }
+      } @else {
+        <p class="empty-info">Ta restauracja nie ma jeszcze menu.</p>
       }
     } @else {
-      <p class="not-found">Menu jest niedostępne.</p>
+      <app-data-state
+        [loading]="menuResource.isLoading()"
+        [failed]="menuLoadFailed()"
+        loadingText="Ładowanie menu…"
+        (retry)="menuResource.reload()"
+      />
     }
   } @else {
     <app-data-state

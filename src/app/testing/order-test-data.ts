@@ -1,10 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { CheckoutData } from '../models/order';
 import { Auth } from '../services/auth';
-import { Menus } from '../services/menus';
 import { Orders } from '../services/orders';
 import { Users } from '../services/users';
-import { restaurantFromSeed } from './api-test';
+import { restaurantFromSeed, productFromSeed } from './api-test';
 
 export const testCheckout: CheckoutData = {
   contact: { firstName: 'Anna', lastName: 'Nowak', email: 'anna@example.com', phone: '600100200' },
@@ -28,7 +27,7 @@ export function logIn(email: string) {
 
 export function placeTestOrder(userId: string, restaurantId = 3) {
   const restaurant = restaurantFromSeed(restaurantId);
-  const product = TestBed.inject(Menus).getByCuisine(restaurant.cuisine)!.categories[0].products[0];
+  const product = productFromSeed(restaurant.id);
 
   return TestBed.inject(Orders).placeOrder(
     userId,

@@ -22,6 +22,7 @@ function makeRestaurant(id: number, deliveryFee: number): Restaurant {
 function makeProduct(id: number, price: number): Product {
   return {
     id: id,
+    categoryId: 1,
     name: `Produkt ${id}`,
     description: '',
     price: price,

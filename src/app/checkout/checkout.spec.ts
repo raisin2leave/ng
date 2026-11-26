@@ -3,9 +3,8 @@ import { provideRouter } from '@angular/router';
 import { Checkout } from './checkout';
 import { Auth } from '../services/auth';
 import { Cart } from '../services/cart';
-import { Menus } from '../services/menus';
 import { Orders } from '../services/orders';
-import { answerRestaurantList, provideTestApi, restaurantFromSeed } from '../testing/api-test';
+import { answerRestaurantList, provideTestApi, restaurantFromSeed, productFromSeed } from '../testing/api-test';
 import { Users } from '../services/users';
 
 describe('Checkout', () => {
@@ -24,7 +23,7 @@ describe('Checkout', () => {
     TestBed.inject(Auth).login('anna@example.com', 'bezpieczne1');
 
     const restaurant = restaurantFromSeed(3);
-    const product = TestBed.inject(Menus).getByCuisine(restaurant.cuisine)!.categories[0].products[0];
+    const product = productFromSeed(restaurant.id);
     const cart = TestBed.inject(Cart);
     cart.add(restaurant, product);
     cart.add(restaurant, product);

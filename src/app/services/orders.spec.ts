@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Orders } from './orders';
-import { Menus } from './menus';
 import { CheckoutData } from '../models/order';
-import { restaurantFromSeed } from '../testing/api-test';
+import { productFromSeed, restaurantFromSeed } from '../testing/api-test';
 
 const checkoutData: CheckoutData = {
   contact: { firstName: 'Anna', lastName: 'Nowak', email: 'anna@example.com', phone: '600100200' },
@@ -17,7 +16,7 @@ describe('Orders service', () => {
 
   function cartSnapshot() {
     const restaurant = restaurantFromSeed(3);
-    const product = TestBed.inject(Menus).getByCuisine(restaurant.cuisine)!.categories[0].products[0];
+    const product = structuredClone(productFromSeed(restaurant.id));
     return {
       restaurant,
       items: [{ product, quantity: 2 }],
@@ -41,22 +40,17 @@ describe('Orders service', () => {
     expect(second.id).toBe(1002);
     expect(first.status).toBe('new');
     expect(first.restaurantName).toBe('Smash Burger Co.');
-    expect(first.items).toEqual([{ productId: 101, name: 'Classic Burger', price: 29.99, quantity: 2 }]);
+    expect(first.items).toEqual([{ productId: 17, name: 'Classic Burger', price: 29.99, quantity: 2 }]);
     expect(first.contact.lastName).toBe('Nowak');
     expect(JSON.parse(localStorage.getItem('foodapp-orders')!).length).toBe(2);
   });
 
   it('should keep the price from the moment of ordering, even if the menu changes later', () => {
     const service = TestBed.inject(Orders);
-    const order = service.placeOrder('user-1', cartSnapshot(), checkoutData);
+    const cart = cartSnapshot();
+    const order = service.placeOrder('user-1', cart, checkoutData);
 
-    TestBed.inject(Menus).updateProduct(101, {
-      name: 'Classic Burger',
-      description: 'Nowy opis',
-      price: 99,
-      imageUrl: '',
-      isAvailable: true,
-    });
+    cart.items[0].product.price = 99;
 
     expect(service.getAll()()[0].items[0].price).toBe(29.99);
     expect(order.items[0].price).toBe(29.99);

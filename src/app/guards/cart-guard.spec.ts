@@ -2,8 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router, UrlTree } from '@angular/router';
 import { cartReadyGuard } from './cart-guard';
 import { Cart } from '../services/cart';
-import { answerRestaurantList, closeRestaurantOnServer, provideTestApi, restaurantFromSeed } from '../testing/api-test';
-import { Menus } from '../services/menus';
+import { answerRestaurantList, closeRestaurantOnServer, provideTestApi, restaurantFromSeed, productFromSeed } from '../testing/api-test';
 import { routes } from '../app.routes';
 import { loggedInGuard } from './auth-guards';
 
@@ -26,7 +25,7 @@ describe('cartReadyGuard', () => {
 
   function fillCart() {
     const restaurant = restaurantFromSeed(3);
-    const product = TestBed.inject(Menus).getByCuisine(restaurant.cuisine)!.categories[0].products[0];
+    const product = productFromSeed(restaurant.id);
     TestBed.inject(Cart).add(restaurant, product);
     return restaurant;
   }

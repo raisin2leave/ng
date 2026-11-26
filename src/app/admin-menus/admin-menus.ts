@@ -1,14 +1,15 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { cuisineOptions } from '../models/restaurant';
+import { RouterLink } from '@angular/router';
+import { Observable } from 'rxjs';
 import { MenuCategory, Product } from '../models/menu';
 import { Menus } from '../services/menus';
 import { Restaurants } from '../services/restaurants';
+import { DataState } from '../data-state/data-state';
 
 @Component({
   selector: 'app-admin-menus',
-  imports: [FormsModule, RouterLink, RouterLinkActive],
+  imports: [FormsModule, RouterLink, DataState],
   templateUrl: './admin-menus.html',
   styleUrl: './admin-menus.scss',
 })
@@ -16,40 +17,25 @@ export class AdminMenus {
   private menusService = inject(Menus);
   private restaurantsService = inject(Restaurants);
 
-  cuisine = input.required<string>();
+  restaurantId = input.required<string>();
 
-  cuisineOptions = cuisineOptions;
+  restaurant = computed(() => this.restaurantsService.getById(Number(this.restaurantId())));
 
-  menu = computed(() => this.menusService.getByCuisine(this.cuisine()));
+  menuResource = this.menusService.loadForRestaurant(() => Number(this.restaurantId()));
 
-  restaurantCount = computed(() => {
-    let count = 0;
+  menu = computed(() => (this.menuResource.hasValue() ? this.menuResource.value() : null));
 
-    for (const restaurant of this.restaurantsService.getAll()()) {
-      if (restaurant.cuisine === this.cuisine()) {
-        count = count + 1;
-      }
-    }
+  menuLoadFailed = computed(() => this.menuResource.error() !== undefined);
 
-    return count;
-  });
+  saving = signal(false);
+  saveError = signal('');
 
   newCategoryName = signal('');
   newCategoryError = signal('');
 
-  renamingCategory = signal('');
+  renamingCategoryId = signal<number | undefined>(undefined);
   renameValue = signal('');
   renameError = signal('');
-
-  cuisineLabel(cuisine: string) {
-    for (const option of cuisineOptions) {
-      if (option.value === cuisine) {
-        return option.label;
-      }
-    }
-
-    return cuisine;
-  }
 
   checkCategoryName(name: string, currentName: string) {
     const trimmed = name.trim();
@@ -64,15 +50,25 @@ export class AdminMenus {
 
     const isSameAsBefore = trimmed.toLowerCase() === currentName.toLowerCase();
 
-    if (!isSameAsBefore && this.menusService.hasCategory(this.cuisine(), trimmed)) {
+    if (!isSameAsBefore && this.hasCategory(trimmed)) {
       return 'Taka kategoria już istnieje w tym menu.';
     }
 
     return '';
   }
 
+  createMenu() {
+    this.send(this.menusService.createMenu(Number(this.restaurantId())), 'Nie udało się utworzyć menu.');
+  }
+
   addCategory(event: Event) {
     event.preventDefault();
+
+    const menu = this.menu();
+
+    if (!menu) {
+      return;
+    }
 
     const error = this.checkCategoryName(this.newCategoryName(), '');
 
@@ -81,35 +77,36 @@ export class AdminMenus {
       return;
     }
 
-    this.menusService.addCategory(this.cuisine(), this.newCategoryName());
-    this.newCategoryName.set('');
-    this.newCategoryError.set('');
+    this.send(this.menusService.addCategory(menu.id, this.newCategoryName()), 'Nie udało się dodać kategorii.', () => {
+      this.newCategoryName.set('');
+      this.newCategoryError.set('');
+    });
   }
 
   startRename(category: MenuCategory) {
-    this.renamingCategory.set(category.name);
+    this.renamingCategoryId.set(category.id);
     this.renameValue.set(category.name);
     this.renameError.set('');
   }
 
   cancelRename() {
-    this.renamingCategory.set('');
+    this.renamingCategoryId.set(undefined);
     this.renameError.set('');
   }
 
-  saveRename(event: Event) {
+  saveRename(event: Event, category: MenuCategory) {
     event.preventDefault();
 
-    const oldName = this.renamingCategory();
-    const error = this.checkCategoryName(this.renameValue(), oldName);
+    const error = this.checkCategoryName(this.renameValue(), category.name);
 
     if (error) {
       this.renameError.set(error);
       return;
     }
 
-    this.menusService.renameCategory(this.cuisine(), oldName, this.renameValue());
-    this.cancelRename();
+    this.send(this.menusService.renameCategory(category.id, this.renameValue()), 'Nie udało się zmienić nazwy kategorii.', () =>
+      this.cancelRename(),
+    );
   }
 
   deleteCategory(category: MenuCategory) {
@@ -120,19 +117,46 @@ export class AdminMenus {
     }
 
     if (confirm(question)) {
-      this.menusService.deleteCategory(this.cuisine(), category.name);
+      this.send(this.menusService.deleteCategory(category.id), 'Nie udało się usunąć kategorii.');
     }
   }
 
   deleteProduct(product: Product) {
     if (confirm(`Usunąć produkt „${product.name}”?`)) {
-      this.menusService.deleteProduct(product.id);
+      this.send(this.menusService.deleteProduct(product.id), 'Nie udało się usunąć produktu.');
     }
   }
 
-  resetMenus() {
-    if (confirm('Usunąć wszystkie zmiany w menu i przywrócić oryginalne dane?')) {
-      this.menusService.resetToOriginal();
+  private hasCategory(name: string) {
+    const menu = this.menu();
+
+    if (!menu) {
+      return false;
     }
+
+    for (const category of menu.categories) {
+      if (category.name.toLowerCase() === name.toLowerCase()) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private send(request: Observable<unknown>, errorMessage: string, afterSuccess?: () => void) {
+    this.saving.set(true);
+    this.saveError.set('');
+
+    request.subscribe({
+      next: () => {
+        this.saving.set(false);
+        afterSuccess?.();
+        this.menuResource.reload();
+      },
+      error: () => {
+        this.saving.set(false);
+        this.saveError.set(`${errorMessage} Sprawdź połączenie i spróbuj ponownie.`);
+      },
+    });
   }
 }

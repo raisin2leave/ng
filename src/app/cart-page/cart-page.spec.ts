@@ -2,8 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { CartPage } from './cart-page';
 import { Cart } from '../services/cart';
-import { answerRestaurantList, closeRestaurantOnServer, provideTestApi, restaurantFromSeed } from '../testing/api-test';
-import { Menus } from '../services/menus';
+import { answerRestaurantList, closeRestaurantOnServer, provideTestApi, restaurantFromSeed, productsOfRestaurant } from '../testing/api-test';
 
 describe('CartPage', () => {
   beforeEach(async () => {
@@ -14,7 +13,7 @@ describe('CartPage', () => {
 
   function fillCartAndOpenPage() {
     const restaurant = restaurantFromSeed(1);
-    const products = TestBed.inject(Menus).getByCuisine(restaurant.cuisine)!.categories.flatMap((category) => category.products);
+    const products = productsOfRestaurant(restaurant.id);
     const cart = TestBed.inject(Cart);
     cart.add(restaurant, products[0]);
     cart.add(restaurant, products[1]);

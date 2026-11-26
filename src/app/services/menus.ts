@@ -1,216 +1,96 @@
-import { Injectable, signal } from '@angular/core';
-import { Menu, MenuCategory, Product, ProductFormValue } from '../models/menu';
-import menusData from '../data/menus.json';
-
-const STORAGE_KEY = 'foodapp-menus';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient, httpResource } from '@angular/common/http';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { forkJoin, map, Observable, of, switchMap } from 'rxjs';
+import { Category, Menu, MenuCategory, MenuInfo, Product, ProductFormValue } from '../models/menu';
+import { API_URL } from '../api';
 
 @Injectable({ providedIn: 'root' })
 export class Menus {
-  private menus = signal<Menu[]>(this.loadFromStorage());
+  private http = inject(HttpClient);
 
-  getAll() {
-    return this.menus.asReadonly();
+  loadForRestaurant(restaurantId: () => number) {
+    return rxResource({
+      params: () => restaurantId(),
+      stream: ({ params }) => this.fetchMenu(params),
+    });
   }
 
-  getByCuisine(cuisine: string) {
-    return this.findMenuIn(this.menus(), cuisine);
+  loadProduct(productId: () => number | undefined) {
+    return httpResource<Product>(() => {
+      const id = productId();
+      return id === undefined ? undefined : `${API_URL}/products/${id}`;
+    });
   }
 
-  hasCategory(cuisine: string, name: string) {
-    const menu = this.getByCuisine(cuisine);
-
-    if (!menu) {
-      return false;
-    }
-
-    for (const category of menu.categories) {
-      if (category.name.toLowerCase() === name.trim().toLowerCase()) {
-        return true;
-      }
-    }
-
-    return false;
+  loadCategory(categoryId: () => number | undefined) {
+    return httpResource<Category>(() => {
+      const id = categoryId();
+      return id === undefined ? undefined : `${API_URL}/categories/${id}`;
+    });
   }
 
-  findProduct(productId: number) {
-    for (const menu of this.menus()) {
-      for (const category of menu.categories) {
-        for (const product of category.products) {
-          if (product.id === productId) {
-            return { product: product, categoryName: category.name, cuisine: menu.cuisine };
-          }
-        }
-      }
-    }
-
-    return undefined;
+  createMenu(restaurantId: number) {
+    return this.http.post<MenuInfo>(`${API_URL}/menus`, { restaurantId: restaurantId, name: 'Menu' });
   }
 
-  addCategory(cuisine: string, name: string) {
-    const copy = this.copyOfMenus();
-    const menu = this.findMenuIn(copy, cuisine);
-
-    if (!menu) {
-      return;
-    }
-
-    menu.categories.push({ name: name.trim(), products: [] });
-    this.saveAll(copy);
+  addCategory(menuId: number, name: string) {
+    return this.http.post<Category>(`${API_URL}/categories`, { menuId: menuId, name: name.trim() });
   }
 
-  renameCategory(cuisine: string, oldName: string, newName: string) {
-    const copy = this.copyOfMenus();
-    const category = this.findCategoryIn(copy, cuisine, oldName);
-
-    if (!category) {
-      return;
-    }
-
-    category.name = newName.trim();
-    this.saveAll(copy);
+  renameCategory(categoryId: number, name: string) {
+    return this.http.patch<Category>(`${API_URL}/categories/${categoryId}`, { name: name.trim() });
   }
 
-  deleteCategory(cuisine: string, name: string) {
-    const copy = this.copyOfMenus();
-    const menu = this.findMenuIn(copy, cuisine);
-
-    if (!menu) {
-      return;
-    }
-
-    const keptCategories: MenuCategory[] = [];
-
-    for (const category of menu.categories) {
-      if (category.name !== name) {
-        keptCategories.push(category);
-      }
-    }
-
-    menu.categories = keptCategories;
-    this.saveAll(copy);
+  deleteCategory(categoryId: number) {
+    return this.http.delete(`${API_URL}/categories/${categoryId}`);
   }
 
-  addProduct(cuisine: string, categoryName: string, data: ProductFormValue) {
-    const copy = this.copyOfMenus();
-    const category = this.findCategoryIn(copy, cuisine, categoryName);
-
-    if (!category) {
-      return undefined;
-    }
-
-    const newProduct: Product = { ...data, id: this.nextProductId() };
-    category.products.push(newProduct);
-    this.saveAll(copy);
-    return newProduct;
+  addProduct(categoryId: number, data: ProductFormValue) {
+    return this.http.post<Product>(`${API_URL}/products`, { ...data, categoryId: categoryId });
   }
 
   updateProduct(productId: number, data: ProductFormValue) {
-    const copy = this.copyOfMenus();
-
-    for (const menu of copy) {
-      for (const category of menu.categories) {
-        for (const product of category.products) {
-          if (product.id === productId) {
-            product.name = data.name;
-            product.description = data.description;
-            product.price = data.price;
-            product.imageUrl = data.imageUrl;
-            product.isAvailable = data.isAvailable;
-          }
-        }
-      }
-    }
-
-    this.saveAll(copy);
+    return this.http.patch<Product>(`${API_URL}/products/${productId}`, data);
   }
 
   deleteProduct(productId: number) {
-    const copy = this.copyOfMenus();
+    return this.http.delete(`${API_URL}/products/${productId}`);
+  }
 
-    for (const menu of copy) {
-      for (const category of menu.categories) {
-        const keptProducts: Product[] = [];
-
-        for (const product of category.products) {
-          if (product.id !== productId) {
-            keptProducts.push(product);
-          }
+  private fetchMenu(restaurantId: number): Observable<Menu | null> {
+    return this.http.get<MenuInfo[]>(`${API_URL}/restaurants/${restaurantId}/menus`).pipe(
+      switchMap((menus) => {
+        if (menus.length === 0) {
+          return of(null);
         }
 
-        category.products = keptProducts;
-      }
-    }
-
-    this.saveAll(copy);
+        return this.fetchCategories(menus[0]);
+      }),
+    );
   }
 
-  resetToOriginal() {
-    localStorage.removeItem(STORAGE_KEY);
-    this.menus.set(menusData as Menu[]);
-  }
-
-  private copyOfMenus(): Menu[] {
-    return structuredClone(this.menus());
-  }
-
-  private findMenuIn(menus: Menu[], cuisine: string) {
-    for (const menu of menus) {
-      if (menu.cuisine === cuisine) {
-        return menu;
-      }
-    }
-
-    return undefined;
-  }
-
-  private findCategoryIn(menus: Menu[], cuisine: string, categoryName: string) {
-    const menu = this.findMenuIn(menus, cuisine);
-
-    if (!menu) {
-      return undefined;
-    }
-
-    for (const category of menu.categories) {
-      if (category.name === categoryName) {
-        return category;
-      }
-    }
-
-    return undefined;
-  }
-
-  private nextProductId() {
-    let highestId = 0;
-
-    for (const menu of this.menus()) {
-      for (const category of menu.categories) {
-        for (const product of category.products) {
-          if (product.id > highestId) {
-            highestId = product.id;
-          }
+  private fetchCategories(menu: MenuInfo): Observable<Menu> {
+    return this.http.get<Category[]>(`${API_URL}/menus/${menu.id}/categories`).pipe(
+      switchMap((categories) => {
+        if (categories.length === 0) {
+          return of({ ...menu, categories: [] });
         }
-      }
-    }
 
-    return highestId + 1;
+        const productRequests: Observable<MenuCategory>[] = [];
+
+        for (const category of categories) {
+          productRequests.push(this.fetchProducts(category));
+        }
+
+        return forkJoin(productRequests).pipe(map((withProducts) => ({ ...menu, categories: withProducts })));
+      }),
+    );
   }
 
-  private saveAll(menus: Menu[]) {
-    this.menus.set(menus);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(menus));
-  }
-
-  private loadFromStorage(): Menu[] {
-    const saved = localStorage.getItem(STORAGE_KEY);
-
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        localStorage.removeItem(STORAGE_KEY);
-      }
-    }
-
-    return menusData as Menu[];
+  private fetchProducts(category: Category): Observable<MenuCategory> {
+    return this.http
+      .get<Product[]>(`${API_URL}/categories/${category.id}/products`)
+      .pipe(map((products) => ({ ...category, products: products })));
   }
 }

@@ -1,33 +1,60 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { form, FormField, min, minLength, required } from '@angular/forms/signals';
-import { ProductFormValue } from '../models/menu';
+import { Product, ProductFormValue } from '../models/menu';
 import { Menus } from '../services/menus';
+import { DataState } from '../data-state/data-state';
 
 @Component({
   selector: 'app-product-form',
-  imports: [FormField, RouterLink],
+  imports: [FormField, RouterLink, DataState],
   templateUrl: './product-form.html',
   styleUrl: './product-form.scss',
 })
-export class ProductForm implements OnInit {
+export class ProductForm {
   private menusService = inject(Menus);
   private router = inject(Router);
 
-  cuisine = input.required<string>();
-  category = input<string>();
+  restaurantId = input.required<string>();
+  categoryId = input<string>();
   productId = input<string>();
 
-  categoryName = signal('');
-  notFound = signal(false);
-  triedToSave = signal(false);
+  isEditing = computed(() => this.productId() !== undefined);
 
-  product = signal<ProductFormValue>({
-    name: '',
-    description: '',
-    price: 0,
-    imageUrl: '',
-    isAvailable: true,
+  productResource = this.menusService.loadProduct(() => toNumber(this.productId()));
+
+  existingProduct = computed(() => (this.productResource.hasValue() ? this.productResource.value() : undefined));
+
+  categoryResource = this.menusService.loadCategory(() => {
+    if (this.isEditing()) {
+      return this.existingProduct()?.categoryId;
+    }
+
+    return toNumber(this.categoryId());
+  });
+
+  category = computed(() => (this.categoryResource.hasValue() ? this.categoryResource.value() : undefined));
+
+  notFound = computed(() => isNotFound(this.productResource.error()) || isNotFound(this.categoryResource.error()));
+
+  loadFailed = computed(() => {
+    if (this.notFound()) {
+      return false;
+    }
+
+    return this.productResource.error() !== undefined || this.categoryResource.error() !== undefined;
+  });
+
+  isLoading = computed(() => this.productResource.isLoading() || this.categoryResource.isLoading());
+
+  triedToSave = signal(false);
+  saving = signal(false);
+  saveError = signal('');
+
+  product = linkedSignal<ProductFormValue>(() => {
+    const existing = this.existingProduct();
+    return existing ? toFormValue(existing) : emptyFormValue();
   });
 
   productForm = form(this.product, (schema) => {
@@ -41,36 +68,14 @@ export class ProductForm implements OnInit {
     min(schema.price, 0.01, { message: 'Cena musi być większa od 0.' });
   });
 
-  ngOnInit() {
-    const productId = this.productId();
-
-    if (productId !== undefined) {
-      const found = this.menusService.findProduct(Number(productId));
-
-      if (!found) {
-        this.notFound.set(true);
-        return;
-      }
-
-      this.categoryName.set(found.categoryName);
-      this.product.set({
-        name: found.product.name,
-        description: found.product.description,
-        price: found.product.price,
-        imageUrl: found.product.imageUrl,
-        isAvailable: found.product.isAvailable,
-      });
-      return;
+  reload() {
+    if (this.productResource.error() !== undefined) {
+      this.productResource.reload();
     }
 
-    const category = this.category();
-
-    if (category === undefined || !this.menusService.hasCategory(this.cuisine(), category)) {
-      this.notFound.set(true);
-      return;
+    if (this.categoryResource.error() !== undefined) {
+      this.categoryResource.reload();
     }
-
-    this.categoryName.set(category);
   }
 
   showErrors(field: { touched(): boolean; invalid(): boolean }) {
@@ -80,19 +85,58 @@ export class ProductForm implements OnInit {
   save(event: Event) {
     event.preventDefault();
 
+    const category = this.category();
+
+    if (!category) {
+      return;
+    }
+
     if (this.productForm().invalid()) {
       this.triedToSave.set(true);
       return;
     }
 
-    const productId = this.productId();
+    const existing = this.existingProduct();
+    let request = this.menusService.addProduct(category.id, this.product());
 
-    if (productId === undefined) {
-      this.menusService.addProduct(this.cuisine(), this.categoryName(), this.product());
-    } else {
-      this.menusService.updateProduct(Number(productId), this.product());
+    if (existing) {
+      request = this.menusService.updateProduct(existing.id, this.product());
     }
 
-    this.router.navigate(['/admin/menus', this.cuisine()]);
+    this.saving.set(true);
+    this.saveError.set('');
+
+    request.subscribe({
+      next: () => {
+        this.saving.set(false);
+        this.router.navigate(['/admin/menus', this.restaurantId()]);
+      },
+      error: () => {
+        this.saving.set(false);
+        this.saveError.set('Nie udało się zapisać produktu. Sprawdź połączenie i spróbuj ponownie.');
+      },
+    });
   }
+}
+
+function toNumber(value: string | undefined) {
+  return value === undefined ? undefined : Number(value);
+}
+
+function isNotFound(error: unknown) {
+  return error instanceof HttpErrorResponse && error.status === 404;
+}
+
+function emptyFormValue(): ProductFormValue {
+  return { name: '', description: '', price: 0, imageUrl: '', isAvailable: true };
+}
+
+function toFormValue(product: Product): ProductFormValue {
+  return {
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    imageUrl: product.imageUrl,
+    isAvailable: product.isAvailable,
+  };
 }

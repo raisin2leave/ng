@@ -4,6 +4,7 @@ import { Product } from '../models/menu';
 
 const testProduct: Product = {
   id: 1,
+  categoryId: 1,
   name: 'Test Burger',
   description: 'Test description',
   price: 32,

@@ -8,7 +8,6 @@
 
     <div>
       <a routerLink="/admin/new" class="btn btn-primary">+ Dodaj restaurację</a>
-      <a routerLink="/admin/menus" class="btn btn-outline-primary ms-2">Zarządzaj menu</a>
       <a routerLink="/admin/users" class="btn btn-outline-primary ms-2">Użytkownicy</a>
       <a routerLink="/admin/orders" class="btn btn-outline-primary ms-2">Zamówienia</a>
     </div>
@@ -102,6 +101,9 @@
             <td class="actions">
               <a class="btn btn-sm btn-outline-primary" [routerLink]="['/admin/edit', restaurant.id]">
                 Edytuj
+              </a>
+              <a class="btn btn-sm btn-outline-primary" [routerLink]="['/admin/menus', restaurant.id]">
+                Menu
               </a>
               <a class="btn btn-sm btn-outline-secondary" [routerLink]="['/restaurant', restaurant.id]">
                 Podgląd
