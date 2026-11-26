@@ -1,7 +1,14 @@
 <div class="orders-page">
   <h1>Moje zamówienia</h1>
 
-  @if (myOrders().length > 0) {
+  @if (!ordersResource.hasValue()) {
+    <app-data-state
+      [loading]="ordersResource.isLoading()"
+      [failed]="loadFailed()"
+      loadingText="Ładowanie zamówień…"
+      (retry)="ordersResource.reload()"
+    />
+  } @else if (myOrders().length > 0) {
     <table class="table table-hover align-middle">
       <thead>
         <tr>

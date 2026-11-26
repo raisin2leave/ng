@@ -4,17 +4,22 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Order, orderStatuses, statusBadgeClass, statusLabel } from '../models/order';
 import { newestFirst, Orders } from '../services/orders';
+import { DataState } from '../data-state/data-state';
 
 @Component({
   selector: 'app-admin-orders',
-  imports: [DatePipe, FormsModule, RouterLink],
+  imports: [DatePipe, FormsModule, RouterLink, DataState],
   templateUrl: './admin-orders.html',
   styleUrl: './admin-orders.scss',
 })
 export class AdminOrders {
   private ordersService = inject(Orders);
 
-  allOrders = this.ordersService.getAll();
+  ordersResource = this.ordersService.loadAll();
+
+  allOrders = computed(() => (this.ordersResource.hasValue() ? this.ordersResource.value() : []));
+
+  loadFailed = computed(() => this.ordersResource.error() !== undefined);
   orderStatuses = orderStatuses;
   statusLabel = statusLabel;
   statusBadgeClass = statusBadgeClass;

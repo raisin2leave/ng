@@ -103,7 +103,13 @@
           @if (problem()) {
             <p class="alert alert-danger" role="alert">{{ problem() }}</p>
           }
-          <button type="submit" class="btn btn-primary btn-lg">Zamawiam i płacę</button>
+          <button type="submit" class="btn btn-primary btn-lg" [disabled]="sending()">
+            @if (sending()) {
+              Wysyłanie zamówienia…
+            } @else {
+              Zamawiam i płacę
+            }
+          </button>
           <p class="hint">* pole wymagane</p>
         </div>
       </form>

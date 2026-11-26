@@ -36,6 +36,7 @@ export class Checkout implements OnInit {
   paymentMethods = paymentMethods;
 
   triedToSend = signal(false);
+  sending = signal(false);
   placedOrder = signal<Order | undefined>(undefined);
   problem = signal('');
 
@@ -109,6 +110,11 @@ export class Checkout implements OnInit {
 
   send(event: Event) {
     event.preventDefault();
+
+    if (this.sending()) {
+      return;
+    }
+
     this.problem.set('');
 
     if (this.checkoutForm().invalid()) {
@@ -135,7 +141,7 @@ export class Checkout implements OnInit {
       return;
     }
 
-    const order = this.ordersService.placeOrder(
+    const request = this.ordersService.placeOrder(
       user.id,
       {
         restaurant: restaurant,
@@ -164,7 +170,18 @@ export class Checkout implements OnInit {
       },
     );
 
-    this.cart.clear();
-    this.placedOrder.set(order);
+    this.sending.set(true);
+
+    request.subscribe({
+      next: (order) => {
+        this.sending.set(false);
+        this.cart.clear();
+        this.placedOrder.set(order);
+      },
+      error: () => {
+        this.sending.set(false);
+        this.problem.set('Nie udało się wysłać zamówienia. Sprawdź połączenie i spróbuj ponownie — koszyk nie został zmieniony.');
+      },
+    });
   }
 }

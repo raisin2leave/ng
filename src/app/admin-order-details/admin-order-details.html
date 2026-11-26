@@ -1,7 +1,9 @@
 <div class="admin">
   <a routerLink="/admin/orders" class="back-link">← Wróć do listy zamówień</a>
 
-  @if (order(); as order) {
+  @if (notFound()) {
+    <p class="not-found">Nie znaleziono zamówienia.</p>
+  } @else if (order(); as order) {
     <form class="status-panel" (submit)="saveStatus($event)">
       <label for="new-status" class="form-label"><strong>Zmień status</strong></label>
       <div class="status-row">
@@ -10,12 +12,15 @@
             <option [value]="status.value">{{ status.label }}</option>
           }
         </select>
-        <button type="submit" class="btn btn-primary" [disabled]="chosenStatus() === order.status">
+        <button type="submit" class="btn btn-primary" [disabled]="saving() || chosenStatus() === order.status">
           Zapisz status
         </button>
       </div>
       @if (message()) {
         <p class="alert alert-success mt-2 mb-0" role="status">{{ message() }}</p>
+      }
+      @if (saveError()) {
+        <p class="alert alert-danger mt-2 mb-0" role="alert">{{ saveError() }}</p>
       }
     </form>
 
@@ -30,6 +35,11 @@
       }
     </section>
   } @else {
-    <p class="not-found">Nie znaleziono zamówienia.</p>
+    <app-data-state
+      [loading]="orderResource.isLoading()"
+      [failed]="loadFailed()"
+      loadingText="Ładowanie zamówienia…"
+      (retry)="orderResource.reload()"
+    />
   }
 </div>

@@ -3,8 +3,8 @@ import { provideRouter } from '@angular/router';
 import { Checkout } from './checkout';
 import { Auth } from '../services/auth';
 import { Cart } from '../services/cart';
-import { Orders } from '../services/orders';
-import { answerRestaurantList, provideTestApi, restaurantFromSeed, productFromSeed } from '../testing/api-test';
+import { API_URL } from '../api';
+import { answerRestaurantList, fakeServer, provideTestApi, restaurantFromSeed, productFromSeed } from '../testing/api-test';
 import { Users } from '../services/users';
 
 describe('Checkout', () => {
@@ -89,7 +89,7 @@ describe('Checkout', () => {
       'Kod pocztowy musi mieć format 00-000.',
       'Wybierz metodę płatności.',
     ]);
-    expect(TestBed.inject(Orders).getAll()().length).toBe(0);
+    fakeServer().expectNone(`${API_URL}/orders`);
     expect(TestBed.inject(Cart).isEmpty()).toBe(false);
   });
 
@@ -113,35 +113,60 @@ describe('Checkout', () => {
     ]);
   });
 
-  it('should send a valid form: save the order, empty the cart and confirm', () => {
+  it('should send a valid form to the API (POST /orders), empty the cart and confirm', () => {
     const { fixture, page } = createPage();
     typeInto(page, '#co-last-name', 'Nowak');
     typeInto(page, '#co-payment', 'on-delivery');
     send(fixture, page);
 
-    const orders = TestBed.inject(Orders).getAll()();
-    expect(orders.length).toBe(1);
-    expect(orders[0].contact).toEqual({
+    const request = fakeServer().expectOne(`${API_URL}/orders`);
+    const sent = request.request.body;
+    expect(request.request.method).toBe('POST');
+    expect(sent.id).toBeUndefined();
+    expect(sent.contact).toEqual({
       firstName: 'Anna',
       lastName: 'Nowak',
       email: 'anna@example.com',
       phone: '600100200',
     });
-    expect(orders[0].deliveryAddress.apartmentNumber).toBe('4');
-    expect(orders[0].paymentMethod).toBe('on-delivery');
-    expect(orders[0].total).toBe(66.48);
+    expect(sent.deliveryAddress.apartmentNumber).toBe('4');
+    expect(sent.paymentMethod).toBe('on-delivery');
+    expect(sent.items).toEqual([{ productId: 17, name: 'Classic Burger', price: 29.99, quantity: 2 }]);
+    expect(sent.total).toBe(66.48);
+    expect(sent.status).toBe('new');
+
+    expect(page.querySelector('button[type="submit"]')?.textContent).toContain('Wysyłanie zamówienia…');
+    expect(TestBed.inject(Cart).isEmpty()).toBe(false);
+
+    request.flush({ ...sent, id: 7 });
+    fixture.detectChanges();
+
     expect(TestBed.inject(Cart).isEmpty()).toBe(true);
-    expect(page.textContent).toContain('Zamówienie nr 1001 zostało złożone');
+    expect(page.textContent).toContain('Zamówienie nr 7 zostało złożone');
   });
 
-  it('should save the discount code and amount with the order', () => {
+  it('should keep the cart and show a message when the API fails', () => {
+    const { fixture, page } = createPage();
+    typeInto(page, '#co-last-name', 'Nowak');
+    typeInto(page, '#co-payment', 'online');
+    send(fixture, page);
+
+    fakeServer().expectOne(`${API_URL}/orders`).flush('down', { status: 503, statusText: 'Unavailable' });
+    fixture.detectChanges();
+
+    expect(page.querySelector('.alert-danger')?.textContent).toContain('Nie udało się wysłać zamówienia.');
+    expect(TestBed.inject(Cart).isEmpty()).toBe(false);
+    expect(page.querySelector('form')).not.toBeNull();
+  });
+
+  it('should send the discount code and amount with the order', () => {
     TestBed.inject(Cart).applyDiscountCode('DARMOWADOSTAWA');
     const { fixture, page } = createPage();
     typeInto(page, '#co-last-name', 'Nowak');
     typeInto(page, '#co-payment', 'online');
     send(fixture, page);
 
-    const order = TestBed.inject(Orders).getAll()()[0];
+    const order = fakeServer().expectOne(`${API_URL}/orders`).request.body;
     expect(order.discountCode).toBe('DARMOWADOSTAWA');
     expect(order.discount).toBe(6.5);
     expect(order.total).toBe(59.98);

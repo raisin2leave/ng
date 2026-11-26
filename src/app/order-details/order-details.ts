@@ -1,20 +1,29 @@
 import { Component, computed, inject, input } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { Auth } from '../services/auth';
 import { Orders } from '../services/orders';
 import { OrderView } from '../order-view/order-view';
+import { DataState } from '../data-state/data-state';
 
 @Component({
   selector: 'app-order-details',
-  imports: [RouterLink, OrderView],
+  imports: [RouterLink, OrderView, DataState],
   template: `
     <div class="orders-page">
       <a routerLink="/orders" class="back-link">← Wróć do moich zamówień</a>
 
-      @if (order(); as order) {
+      @if (notFound()) {
+        <p class="not-found">Nie znaleziono zamówienia.</p>
+      } @else if (order(); as order) {
         <app-order-view [order]="order" />
       } @else {
-        <p class="not-found">Nie znaleziono zamówienia.</p>
+        <app-data-state
+          [loading]="orderResource.isLoading()"
+          [failed]="loadFailed()"
+          loadingText="Ładowanie zamówienia…"
+          (retry)="orderResource.reload()"
+        />
       }
     </div>
   `,
@@ -43,14 +52,21 @@ export class OrderDetails {
 
   id = input.required<string>();
 
-  order = computed(() => {
-    const order = this.ordersService.getById(Number(this.id()));
-    const user = this.auth.currentUser();
+  orderResource = this.ordersService.loadOne(() => Number(this.id()));
 
-    if (!order || !user || order.userId !== user.id) {
-      return undefined;
-    }
+  loadedOrder = computed(() => (this.orderResource.hasValue() ? this.orderResource.value() : undefined));
 
-    return order;
+  isSomeoneElses = computed(() => {
+    const order = this.loadedOrder();
+    return order !== undefined && order.userId !== this.auth.currentUser()?.id;
   });
+
+  order = computed(() => (this.isSomeoneElses() ? undefined : this.loadedOrder()));
+
+  notFound = computed(() => {
+    const error = this.orderResource.error();
+    return (error instanceof HttpErrorResponse && error.status === 404) || this.isSomeoneElses();
+  });
+
+  loadFailed = computed(() => this.orderResource.error() !== undefined && !this.notFound());
 }

@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { CheckoutData } from '../models/order';
+import { CheckoutData, Order, OrderStatus } from '../models/order';
 import { Auth } from '../services/auth';
-import { Orders } from '../services/orders';
 import { Users } from '../services/users';
 import { restaurantFromSeed, productFromSeed } from './api-test';
 
@@ -25,19 +24,22 @@ export function logIn(email: string) {
   TestBed.inject(Auth).login(email, 'bezpieczne1');
 }
 
-export function placeTestOrder(userId: string, restaurantId = 3) {
+export function makeTestOrder(id: number, userId: string, restaurantId = 3, status: OrderStatus = 'new'): Order {
   const restaurant = restaurantFromSeed(restaurantId);
-  const product = productFromSeed(restaurant.id);
+  const product = productFromSeed(restaurantId);
 
-  return TestBed.inject(Orders).placeOrder(
-    userId,
-    {
-      restaurant: restaurant,
-      items: [{ product: product, quantity: 2 }],
-      subtotal: product.price * 2,
-      deliveryFee: restaurant.deliveryFee,
-      total: product.price * 2 + restaurant.deliveryFee,
-    },
-    testCheckout,
-  );
+  return {
+    ...testCheckout,
+    id: id,
+    userId: userId,
+    createdAt: new Date(2026, 10, 20, 12, id % 60).toISOString(),
+    restaurantId: restaurant.id,
+    restaurantName: restaurant.name,
+    items: [{ productId: product.id, name: product.name, price: product.price, quantity: 2 }],
+    subtotal: product.price * 2,
+    deliveryFee: restaurant.deliveryFee,
+    discount: 0,
+    total: product.price * 2 + restaurant.deliveryFee,
+    status: status,
+  };
 }

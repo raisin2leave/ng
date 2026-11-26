@@ -1,10 +1,9 @@
-import { Injectable, signal } from '@angular/core';
-import { CheckoutData, Order, OrderItem, OrderStatus } from '../models/order';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient, httpResource } from '@angular/common/http';
+import { CheckoutData, NewOrder, Order, OrderItem, OrderStatus } from '../models/order';
 import { CartItem } from '../models/cart';
 import { Restaurant } from '../models/restaurant';
-
-const STORAGE_KEY = 'foodapp-orders';
-const FIRST_ORDER_NUMBER = 1001;
+import { API_URL } from '../api';
 
 export type CartSnapshot = {
   restaurant: Restaurant;
@@ -18,32 +17,26 @@ export type CartSnapshot = {
 
 @Injectable({ providedIn: 'root' })
 export class Orders {
-  private orders = signal<Order[]>(this.loadFromStorage());
+  private http = inject(HttpClient);
 
-  getAll() {
-    return this.orders.asReadonly();
+  loadAll() {
+    return httpResource<Order[]>(() => `${API_URL}/orders`);
   }
 
-  getById(id: number) {
-    for (const order of this.orders()) {
-      if (order.id === id) {
-        return order;
-      }
-    }
+  loadForUser(userId: () => string | undefined) {
+    return httpResource<Order[]>(() => {
+      const id = userId();
 
-    return undefined;
+      if (id === undefined) {
+        return undefined;
+      }
+
+      return { url: `${API_URL}/orders`, params: { userId: id } };
+    });
   }
 
-  getForUser(userId: string) {
-    const result: Order[] = [];
-
-    for (const order of this.orders()) {
-      if (order.userId === userId) {
-        result.push(order);
-      }
-    }
-
-    return newestFirst(result);
+  loadOne(id: () => number) {
+    return httpResource<Order>(() => `${API_URL}/orders/${id()}`);
   }
 
   placeOrder(userId: string, cart: CartSnapshot, checkout: CheckoutData) {
@@ -58,9 +51,8 @@ export class Orders {
       });
     }
 
-    const order: Order = {
+    const order: NewOrder = {
       ...checkout,
-      id: this.nextOrderNumber(),
       userId: userId,
       createdAt: new Date().toISOString(),
       restaurantId: cart.restaurant.id,
@@ -74,53 +66,11 @@ export class Orders {
       status: 'new',
     };
 
-    this.saveAll([...this.orders(), order]);
-    return order;
+    return this.http.post<Order>(`${API_URL}/orders`, order);
   }
 
   changeStatus(id: number, status: OrderStatus) {
-    const updated: Order[] = [];
-
-    for (const order of this.orders()) {
-      if (order.id === id) {
-        updated.push({ ...order, status: status });
-      } else {
-        updated.push(order);
-      }
-    }
-
-    this.saveAll(updated);
-  }
-
-  private nextOrderNumber() {
-    let highest = FIRST_ORDER_NUMBER - 1;
-
-    for (const order of this.orders()) {
-      if (order.id > highest) {
-        highest = order.id;
-      }
-    }
-
-    return highest + 1;
-  }
-
-  private saveAll(orders: Order[]) {
-    this.orders.set(orders);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
-  }
-
-  private loadFromStorage(): Order[] {
-    const saved = localStorage.getItem(STORAGE_KEY);
-
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        localStorage.removeItem(STORAGE_KEY);
-      }
-    }
-
-    return [];
+    return this.http.patch<Order>(`${API_URL}/orders/${id}`, { status: status });
   }
 }
 

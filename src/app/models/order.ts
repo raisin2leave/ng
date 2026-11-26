@@ -61,6 +61,8 @@ export type Order = CheckoutData & {
   status: OrderStatus;
 };
 
+export type NewOrder = Omit<Order, 'id'>;
+
 export function statusLabel(status: OrderStatus) {
   for (const option of orderStatuses) {
     if (option.value === status) {

@@ -3,11 +3,12 @@ import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { statusBadgeClass, statusLabel } from '../models/order';
 import { Auth } from '../services/auth';
-import { Orders } from '../services/orders';
+import { newestFirst, Orders } from '../services/orders';
+import { DataState } from '../data-state/data-state';
 
 @Component({
   selector: 'app-my-orders',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, DataState],
   templateUrl: './my-orders.html',
   styleUrl: './my-orders.scss',
 })
@@ -18,13 +19,9 @@ export class MyOrders {
   statusLabel = statusLabel;
   statusBadgeClass = statusBadgeClass;
 
-  myOrders = computed(() => {
-    const user = this.auth.currentUser();
+  ordersResource = this.ordersService.loadForUser(() => this.auth.currentUser()?.id);
 
-    if (!user) {
-      return [];
-    }
+  myOrders = computed(() => (this.ordersResource.hasValue() ? newestFirst(this.ordersResource.value()) : []));
 
-    return this.ordersService.getForUser(user.id);
-  });
+  loadFailed = computed(() => this.ordersResource.error() !== undefined);
 }
