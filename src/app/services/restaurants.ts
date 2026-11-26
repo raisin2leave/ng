@@ -41,6 +41,10 @@ export class Restaurants {
     this.listResource.reload();
   }
 
+  loadOne(id: () => number) {
+    return httpResource<Restaurant>(() => `${API_URL}/restaurants/${id()}`);
+  }
+
   create(data: RestaurantFormValue) {
     return this.http
       .post<Restaurant>(`${API_URL}/restaurants`, { ...data, rating: 0 })

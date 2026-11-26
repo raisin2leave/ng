@@ -1,4 +1,5 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { ProductCard } from '../product-card/product-card';
 import { Product } from '../models/menu';
@@ -16,14 +17,20 @@ import { DataState } from '../data-state/data-state';
 export class RestDetails {
   id = input.required<string>();
 
-  restaurantsService = inject(Restaurants);
+  private restaurantsService = inject(Restaurants);
   private menusService = inject(Menus);
   cart = inject(Cart);
 
-  restaurant = computed(() => {
-    const id = Number(this.id());
-    return this.restaurantsService.getById(id);
+  restaurantResource = this.restaurantsService.loadOne(() => Number(this.id()));
+
+  restaurant = computed(() => (this.restaurantResource.hasValue() ? this.restaurantResource.value() : undefined));
+
+  notFound = computed(() => {
+    const error = this.restaurantResource.error();
+    return error instanceof HttpErrorResponse && error.status === 404;
   });
+
+  loadFailed = computed(() => this.restaurantResource.error() !== undefined && !this.notFound());
 
   menu = computed(() => {
     const restaurant = this.restaurant();

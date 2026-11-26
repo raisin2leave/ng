@@ -1,13 +1,8 @@
 <div class="details">
   <a routerLink="/" class="back-link">← Wróć do listy restauracji</a>
 
-  @if (!restaurantsService.hasLoaded()) {
-    <app-data-state
-      [loading]="restaurantsService.isLoading()"
-      [failed]="restaurantsService.loadFailed()"
-      loadingText="Ładowanie restauracji…"
-      (retry)="restaurantsService.reload()"
-    />
+  @if (notFound()) {
+    <p class="not-found">Nie znaleziono restauracji.</p>
   } @else if (restaurant(); as restaurant) {
     @if (restaurant.imageUrl) {
       <img
@@ -87,7 +82,12 @@
       <p class="not-found">Menu jest niedostępne.</p>
     }
   } @else {
-    <p class="not-found">Nie znaleziono restauracji.</p>
+    <app-data-state
+      [loading]="restaurantResource.isLoading()"
+      [failed]="loadFailed()"
+      loadingText="Ładowanie restauracji…"
+      (retry)="restaurantResource.reload()"
+    />
   }
 </div>
 
