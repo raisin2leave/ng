@@ -41,6 +41,18 @@ export class Restaurants {
     this.listResource.reload();
   }
 
+  search(text: () => string) {
+    return httpResource<Restaurant[]>(() => {
+      const searchText = text();
+
+      if (searchText === '') {
+        return undefined;
+      }
+
+      return { url: `${API_URL}/restaurants`, params: { name_like: escapeForSearch(searchText) } };
+    });
+  }
+
   loadOne(id: () => number) {
     return httpResource<Restaurant>(() => `${API_URL}/restaurants/${id()}`);
   }
@@ -74,4 +86,8 @@ export class Restaurants {
       return result;
     });
   }
+}
+
+function escapeForSearch(text: string) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

@@ -1,9 +1,13 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime, map } from 'rxjs';
 import { RestCard } from '../rest-card/rest-card';
 import { cuisineOptions, Restaurant } from '../models/restaurant';
 import { Restaurants } from '../services/restaurants';
 import { DataState } from '../data-state/data-state';
+
+export const SEARCH_DELAY_MS = 300;
 
 @Component({
   selector: 'app-rest-list',
@@ -18,24 +22,41 @@ export class RestList {
   cuisineOptions = cuisineOptions;
 
   searchText = signal('');
+
+  searchTerm = toSignal(
+    toObservable(this.searchText).pipe(
+      debounceTime(SEARCH_DELAY_MS),
+      map((text) => text.trim()),
+    ),
+    { initialValue: '' },
+  );
+
+  searchResource = this.restaurantsService.search(() => this.searchTerm());
+
+  isSearching = computed(() => this.searchTerm() !== '');
+
+  searchFailed = computed(() => this.searchResource.error() !== undefined);
+
+  waitingForSearch = computed(() => this.isSearching() && !this.searchResource.hasValue());
+
+  private sourceRestaurants = computed(() => {
+    if (!this.isSearching()) {
+      return this.allRestaurants();
+    }
+
+    return this.searchResource.hasValue() ? this.searchResource.value() : [];
+  });
   selectedCuisine = signal('all');
   selectedStatus = signal('all');
   sortBy = signal('rating');
 
   filteredRestaurants = computed(() => {
-    const search = this.searchText().toLowerCase();
     const cuisine = this.selectedCuisine();
     const status = this.selectedStatus();
     const sortBy = this.sortBy();
     const result: Restaurant[] = [];
 
-    for (const restaurant of this.allRestaurants()) {
-      const name = restaurant.name.toLowerCase();
-
-      if (!name.includes(search)) {
-        continue;
-      }
-
+    for (const restaurant of this.sourceRestaurants()) {
       if (cuisine !== 'all' && restaurant.cuisine !== cuisine) {
         continue;
       }

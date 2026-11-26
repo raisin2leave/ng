@@ -54,6 +54,13 @@
 @if (restaurantsService.hasLoaded()) {
   @if (allRestaurants().length === 0) {
     <p class="no-results text-center">Brak restauracji do wyświetlenia.</p>
+  } @else if (waitingForSearch()) {
+    <app-data-state
+      [loading]="searchResource.isLoading()"
+      [failed]="searchFailed()"
+      loadingText="Szukanie restauracji…"
+      (retry)="searchResource.reload()"
+    />
   } @else {
     <section class="restaurant-list">
       @for (restaurant of filteredRestaurants(); track restaurant.id) {

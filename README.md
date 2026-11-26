@@ -36,21 +36,33 @@ npm start
 API działa pod adresem `http://localhost:3000`:
 
 ```text
-GET   /restaurants
+GET   /restaurants                (wyszukiwanie: ?name_like=tekst)
 GET   /restaurants/:id
 GET   /restaurants/:id/menus
 GET   /menus/:id/categories
 GET   /categories/:id/products
-GET   /orders
+GET   /orders                     (zamówienia klienta: ?userId=...)
 POST  /orders
 PATCH /orders/:id
 ```
+
+Panel admina zapisuje zmiany przez API: restauracje (`POST`/`PATCH /restaurants`),
+menu wybranej restauracji (przycisk „Menu” w tabeli: `/menus`, `/categories`, `/products`)
+i statusy zamówień (`PATCH /orders/:id`). Konta użytkowników zostają w localStorage.
 
 - `api/db.seed.json` — dane startowe (w repozytorium),
 - `api/db.json` — kopia robocza, którą zmienia API (np. nowe zamówienia); nie jest w repozytorium,
 - `npm run api:reset` — przywraca dane startowe.
 
 To serwer tylko do nauki: nie ma logowania ani zabezpieczeń.
+
+Zadania dodatkowe z Lab 7:
+
+- **retry** — zapytania GET, które nie powiodły się z powodu błędu serwera lub braku połączenia, są automatycznie powtarzane 2 razy (po 1 s i 2 s); dopiero potem pojawia się „Unable to load data.” z przyciskiem Retry,
+- **anulowanie nieaktualnych requestów** — nowe wyszukiwanie lub zmiana restauracji przerywa poprzednie, niepotrzebne już zapytanie,
+- **debounced search** — wyszukiwarka restauracji pyta API dopiero 300 ms po ostatnim wpisanym znaku,
+- **cache danych** — odpowiedzi dla restauracji i menu są pamiętane przez 60 s; każda zmiana (POST/PATCH/DELETE) czyści cache, a zamówienia nie są cache'owane,
+- **interceptor HTTP** — retry i cache działają jako interceptory (`src/app/interceptors`), więc obejmują wszystkie zapytania aplikacji.
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.24.
 
