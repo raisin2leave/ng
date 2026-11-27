@@ -1,19 +1,19 @@
 import { Component, computed, input } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { Order, orderStatuses, paymentLabel, statusBadgeClass, statusLabel } from '../models/order';
+import { CurrencyPipe, DatePipe } from '@angular/common';
+import { Order, orderStatuses } from '../models/order';
+import { StatusLabelPipe } from '../pipes/status-label-pipe';
+import { StatusBadgePipe } from '../pipes/status-badge-pipe';
+import { PaymentLabelPipe } from '../pipes/payment-label-pipe';
 
 @Component({
   selector: 'app-order-view',
-  imports: [DatePipe],
+  imports: [DatePipe, CurrencyPipe, StatusLabelPipe, StatusBadgePipe, PaymentLabelPipe],
   templateUrl: './order-view.html',
   styleUrl: './order-view.scss',
 })
 export class OrderView {
   order = input.required<Order>();
 
-  statusLabel = statusLabel;
-  statusBadgeClass = statusBadgeClass;
-  paymentLabel = paymentLabel;
 
   steps = orderStatuses.filter((status) => status.value !== 'cancelled');
 

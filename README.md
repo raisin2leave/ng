@@ -64,6 +64,23 @@ Zadania dodatkowe z Lab 7:
 - **cache danych** — odpowiedzi dla restauracji i menu są pamiętane przez 60 s; każda zmiana (POST/PATCH/DELETE) czyści cache, a zamówienia nie są cache'owane,
 - **interceptor HTTP** — retry i cache działają jako interceptory (`src/app/interceptors`), więc obejmują wszystkie zapytania aplikacji.
 
+## Dyrektywy i pipes (Lab 8)
+
+Wbudowane:
+
+- `CurrencyPipe` — wszystkie kwoty w formacie polskim (`29,99 zł`); język i waluta ustawione w `src/app/locale.ts`,
+- `DatePipe` — daty zamówień,
+- `NgOptimizedImage` (`ngSrc`) — zdjęcia restauracji i produktów: leniwe ładowanie, `srcset` dobierany do ekranu (loader w `src/app/image-loader.ts`), `priority` dla zdjęć widocznych od razu.
+
+Własne pipes (`src/app/pipes`): `statusLabel`, `statusBadge`, `paymentLabel`, `cuisineLabel`, `rating`, `deliveryTime`.
+
+Własne dyrektywy (`src/app/directives`):
+
+- `appConfirm` — pyta „Czy na pewno…?” przed usunięciem/dezaktywacją/anulowaniem,
+- `appAutofocus` — ustawia kursor w polu (logowanie, zmiana nazwy kategorii),
+- `appImageFallback` — pokazuje obrazek „Brak zdjęcia”, gdy zdjęcie się nie wczyta,
+- `*appIfRole` — pokazuje element tylko użytkownikowi z daną rolą (np. link do panelu admina).
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.24.
 
 ## Development server

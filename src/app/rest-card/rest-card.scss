@@ -15,9 +15,12 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-.restaurant-card img {
-  width: 100%;
+.card-image {
+  position: relative;
   height: 180px;
+}
+
+.card-image img {
   object-fit: cover;
 }
 

@@ -6,8 +6,8 @@
         {{ order().createdAt | date: 'dd.MM.yyyy, HH:mm' }} · {{ order().restaurantName }}
       </p>
     </div>
-    <span class="badge fs-6" [class]="statusBadgeClass(order().status)">
-      {{ statusLabel(order().status) }}
+    <span class="badge fs-6" [class]="order().status | statusBadge">
+      {{ order().status | statusLabel }}
     </span>
   </header>
 
@@ -44,21 +44,21 @@
         @for (item of order().items; track item.productId) {
           <tr>
             <td>{{ item.name }}</td>
-            <td class="text-end">{{ item.price.toFixed(2) }} zł</td>
+            <td class="text-end">{{ item.price | currency }}</td>
             <td class="text-end">{{ item.quantity }}</td>
-            <td class="text-end">{{ (item.price * item.quantity).toFixed(2) }} zł</td>
+            <td class="text-end">{{ (item.price * item.quantity) | currency }}</td>
           </tr>
         }
       </tbody>
     </table>
 
     <dl class="totals">
-      <div><dt>Suma zamówienia</dt><dd>{{ order().subtotal.toFixed(2) }} zł</dd></div>
-      <div><dt>Koszt dostawy</dt><dd>{{ order().deliveryFee.toFixed(2) }} zł</dd></div>
+      <div><dt>Suma zamówienia</dt><dd>{{ order().subtotal | currency }}</dd></div>
+      <div><dt>Koszt dostawy</dt><dd>{{ order().deliveryFee | currency }}</dd></div>
       @if (order().discount; as discount) {
-        <div class="discount-row"><dt>Rabat ({{ order().discountCode }})</dt><dd>−{{ discount.toFixed(2) }} zł</dd></div>
+        <div class="discount-row"><dt>Rabat ({{ order().discountCode }})</dt><dd>−{{ discount | currency }}</dd></div>
       }
-      <div class="to-pay"><dt>Kwota do zapłaty</dt><dd>{{ order().total.toFixed(2) }} zł</dd></div>
+      <div class="to-pay"><dt>Kwota do zapłaty</dt><dd>{{ order().total | currency }}</dd></div>
     </dl>
   </section>
 
@@ -80,7 +80,7 @@
     </section>
     <section class="col-md-4">
       <h3 class="h6">Płatność</h3>
-      <p class="mb-0">{{ paymentLabel(order().paymentMethod) }}</p>
+      <p class="mb-0">{{ order().paymentMethod | paymentLabel }}</p>
     </section>
   </div>
 </article>

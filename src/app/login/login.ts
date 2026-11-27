@@ -3,10 +3,11 @@ import { Router, RouterLink } from '@angular/router';
 import { email, form, FormField, required } from '@angular/forms/signals';
 import { Auth } from '../services/auth';
 import { FieldErrors } from '../field-errors/field-errors';
+import { Autofocus } from '../directives/autofocus';
 
 @Component({
   selector: 'app-login',
-  imports: [FormField, RouterLink, FieldErrors],
+  imports: [FormField, RouterLink, FieldErrors, Autofocus],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })

@@ -8,10 +8,22 @@
   background: white;
 }
 
-.product-card img {
-  width: 100%;
+.product-image {
+  position: relative;
   height: 140px;
+}
+
+.product-image img {
   object-fit: cover;
+}
+
+.no-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: #e9ecef;
+  color: #6c757d;
 }
 
 .product-info {

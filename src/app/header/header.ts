@@ -2,10 +2,11 @@ import { Component, computed, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Auth } from '../services/auth';
 import { Cart } from '../services/cart';
+import { IfRole } from '../directives/if-role';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, IfRole],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
@@ -14,7 +15,6 @@ export class Header {
   private router = inject(Router);
 
   currentUser = this.auth.currentUser;
-  isAdmin = this.auth.isAdmin;
   cartCount = inject(Cart).itemCount;
   cartCountWord = computed(() => productWord(this.cartCount()));
 

@@ -7,10 +7,11 @@ import { Orders } from '../services/orders';
 import { Users } from '../services/users';
 import { OrderView } from '../order-view/order-view';
 import { DataState } from '../data-state/data-state';
+import { Confirm } from '../directives/confirm';
 
 @Component({
   selector: 'app-admin-order-details',
-  imports: [FormsModule, RouterLink, OrderView, DataState],
+  imports: [FormsModule, RouterLink, OrderView, DataState, Confirm],
   templateUrl: './admin-order-details.html',
   styleUrl: './admin-order-details.scss',
 })
@@ -43,17 +44,11 @@ export class AdminOrderDetails {
   saveError = signal('');
   saving = signal(false);
 
-  saveStatus(event: Event) {
-    event.preventDefault();
-
+  saveStatus() {
     const order = this.order();
     const newStatus = this.chosenStatus();
 
     if (!order || newStatus === '' || newStatus === order.status) {
-      return;
-    }
-
-    if (newStatus === 'cancelled' && !confirm(`Czy na pewno anulować zamówienie nr ${order.id}?`)) {
       return;
     }
 

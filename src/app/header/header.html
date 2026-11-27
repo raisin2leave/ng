@@ -14,17 +14,13 @@
       }
     </a>
 
-    @if (isAdmin()) {
-      <a routerLink="/admin" routerLinkActive="active">Panel admina</a>
-    }
+    <a *appIfRole="'admin'" routerLink="/admin" routerLinkActive="active">Panel admina</a>
 
     @if (currentUser(); as user) {
       <a routerLink="/orders" routerLinkActive="active">Moje zamówienia</a>
       <a routerLink="/profile" routerLinkActive="active" class="user-info" title="Mój profil">
         Zalogowano: <strong>{{ user.name }}</strong>
-        @if (user.role === 'admin') {
-          <span class="badge text-bg-warning">admin</span>
-        }
+        <span *appIfRole="'admin'" class="badge text-bg-warning">admin</span>
       </a>
       <button type="button" class="logout-button" (click)="logOut()">Wyloguj</button>
     } @else {

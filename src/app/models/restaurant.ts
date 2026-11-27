@@ -14,6 +14,16 @@ export const cuisineOptions = [
   { value: CuisineType.Polish, label: 'Polska' },
 ];
 
+export function cuisineLabel(cuisine: string) {
+  for (const option of cuisineOptions) {
+    if (option.value === cuisine) {
+      return option.label;
+    }
+  }
+
+  return cuisine;
+}
+
 export type Restaurant = {
   id: number;
   name: string;

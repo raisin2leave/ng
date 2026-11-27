@@ -44,9 +44,9 @@
             <td>{{ order.createdAt | date: 'dd.MM.yyyy, HH:mm' }}</td>
             <td>{{ order.contact.firstName }} {{ order.contact.lastName }}</td>
             <td>{{ order.restaurantName }}</td>
-            <td class="text-end">{{ order.total.toFixed(2) }} zł</td>
+            <td class="text-end">{{ order.total | currency }}</td>
             <td>
-              <span class="badge" [class]="statusBadgeClass(order.status)">{{ statusLabel(order.status) }}</span>
+              <span class="badge" [class]="order.status | statusBadge">{{ order.status | statusLabel }}</span>
             </td>
             <td class="text-end">
               <a class="btn btn-sm btn-outline-primary" [routerLink]="['/admin/orders', order.id]">

@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { OrderView } from './order-view';
 import { Order, OrderStatus, orderStatuses } from '../models/order';
 import { testCheckout } from '../testing/order-test-data';
+import { pln } from '../testing/format';
 
 const testOrder: Order = {
   ...testCheckout,
@@ -36,11 +37,11 @@ describe('OrderView', () => {
     );
 
     expect(text).toContain('Classic Burger');
-    expect(text).toContain('59.98 zł');
+    expect(text).toContain('59,98 zł');
     expect(amounts).toEqual([
-      'Suma zamówienia = 74.97 zł',
-      'Koszt dostawy = 6.50 zł',
-      'Kwota do zapłaty = 81.47 zł',
+      `Suma zamówienia = ${pln(74.97)}`,
+      `Koszt dostawy = ${pln(6.5)}`,
+      `Kwota do zapłaty = ${pln(81.47)}`,
     ]);
     expect(text).toContain('Anna Nowak');
     expect(text).toContain('ul. Prosta 12/4');
@@ -77,6 +78,6 @@ describe('OrderView', () => {
     fixture.detectChanges();
     const row = (fixture.nativeElement as HTMLElement).querySelector('.discount-row');
 
-    expect(row?.textContent?.replace(/\s+/g, '')).toBe('Rabat(WITAJ10)−7.50zł');
+    expect(row?.textContent?.replace(/\s+/g, '')).toBe('Rabat(WITAJ10)−7,50zł');
   });
 });

@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ProductCard } from './product-card';
 import { Product } from '../models/menu';
+import { pln } from '../testing/format';
 
 const testProduct: Product = {
   id: 1,
@@ -20,7 +21,7 @@ describe('ProductCard', () => {
     const page: HTMLElement = fixture.nativeElement;
     expect(page.textContent).toContain('Test Burger');
     expect(page.textContent).toContain('Test description');
-    expect(page.textContent).toContain('32.00 zł');
+    expect(page.textContent).toContain(pln(32));
     expect(page.textContent).toContain('Dostępny');
     expect(page.querySelector('img')?.getAttribute('alt')).toBe('Test Burger');
   });

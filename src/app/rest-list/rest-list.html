@@ -64,7 +64,7 @@
   } @else {
     <section class="restaurant-list">
       @for (restaurant of filteredRestaurants(); track restaurant.id) {
-        <app-rest-card [restaurant]="restaurant" />
+        <app-rest-card [restaurant]="restaurant" [isFirstOnScreen]="$index < 3" />
       } @empty {
         <p class="no-results">Nie znaleziono restauracji.</p>
       }

@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { CartPage } from './cart-page';
 import { Cart } from '../services/cart';
 import { answerRestaurantList, closeRestaurantOnServer, provideTestApi, restaurantFromSeed, productsOfRestaurant } from '../testing/api-test';
+import { pln } from '../testing/format';
 
 describe('CartPage', () => {
   beforeEach(async () => {
@@ -104,9 +105,9 @@ describe('CartPage', () => {
     );
 
     expect(amounts).toEqual([
-      `Suma zamówienia ${subtotal.toFixed(2)} zł`,
-      `Koszt dostawy ${restaurant.deliveryFee.toFixed(2)} zł`,
-      `Kwota do zapłaty ${(subtotal + restaurant.deliveryFee).toFixed(2)} zł`,
+      `Suma zamówienia ${pln(subtotal)}`,
+      `Koszt dostawy ${pln(restaurant.deliveryFee)}`,
+      `Kwota do zapłaty ${pln(subtotal + restaurant.deliveryFee)}`,
     ]);
   });
 
@@ -160,7 +161,7 @@ describe('CartPage', () => {
 
       expect(page.querySelector('.applied-code')?.textContent).toContain('WITAJ10');
       expect(page.querySelector('.discount-row')?.textContent?.replace(/\s+/g, '')).toBe(
-        `Rabat(WITAJ10)−${cart.discount().toFixed(2)}zł`,
+        `Rabat(WITAJ10)−${cart.discount().toFixed(2).replace('.', ',')}zł`,
       );
       expect(cart.total()).toBe(Math.round((cart.subtotal() + cart.deliveryFee() - cart.discount()) * 100) / 100);
     });

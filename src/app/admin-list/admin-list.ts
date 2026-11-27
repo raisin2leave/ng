@@ -2,12 +2,15 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { DataState } from '../data-state/data-state';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { cuisineOptions, Restaurant } from '../models/restaurant';
+import { cuisineLabel, Restaurant } from '../models/restaurant';
 import { Restaurants } from '../services/restaurants';
+import { CuisineLabelPipe } from '../pipes/cuisine-label-pipe';
+import { RatingPipe } from '../pipes/rating-pipe';
+import { Confirm } from '../directives/confirm';
 
 @Component({
   selector: 'app-admin-list',
-  imports: [RouterLink, FormsModule, DataState],
+  imports: [RouterLink, FormsModule, DataState, CuisineLabelPipe, RatingPipe, Confirm],
   templateUrl: './admin-list.html',
   styleUrl: './admin-list.scss',
 })
@@ -49,7 +52,7 @@ export class AdminList {
       result.sort((a, b) => a.name.localeCompare(b.name, 'pl') * direction);
     } else if (column === 'cuisine') {
       result.sort(
-        (a, b) => this.cuisineLabel(a.cuisine).localeCompare(this.cuisineLabel(b.cuisine), 'pl') * direction,
+        (a, b) => cuisineLabel(a.cuisine).localeCompare(cuisineLabel(b.cuisine), 'pl') * direction,
       );
     } else if (column === 'rating') {
       result.sort((a, b) => (a.rating - b.rating) * direction);
@@ -59,16 +62,6 @@ export class AdminList {
 
     return result;
   });
-
-  cuisineLabel(cuisine: string) {
-    for (const option of cuisineOptions) {
-      if (option.value === cuisine) {
-        return option.label;
-      }
-    }
-
-    return cuisine;
-  }
 
   sortBy(column: string) {
     if (this.sortColumn() === column) {
@@ -103,9 +96,7 @@ export class AdminList {
   }
 
   deactivate(restaurant: Restaurant) {
-    if (confirm(`Czy na pewno chcesz dezaktywować restaurację „${restaurant.name}”?`)) {
-      this.changeActive(restaurant, false);
-    }
+    this.changeActive(restaurant, false);
   }
 
   activate(restaurant: Restaurant) {

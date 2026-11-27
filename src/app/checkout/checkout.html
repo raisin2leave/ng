@@ -4,7 +4,7 @@
       <h1 class="h4">Dziękujemy! Zamówienie nr {{ order.id }} zostało złożone.</h1>
       <p class="mb-2">
         Restauracja: <strong>{{ order.restaurantName }}</strong> ·
-        Kwota do zapłaty: <strong>{{ order.total.toFixed(2) }} zł</strong> ·
+        Kwota do zapłaty: <strong>{{ order.total | currency }}</strong> ·
         Status: <strong>Nowe</strong>
       </p>
       <a [routerLink]="['/orders', order.id]" class="btn btn-success">Zobacz szczegóły zamówienia</a>
@@ -124,17 +124,17 @@
             @for (item of cart.items(); track item.product.id) {
               <li>
                 <span>{{ item.quantity }} × {{ item.product.name }}</span>
-                <span>{{ (item.product.price * item.quantity).toFixed(2) }} zł</span>
+                <span>{{ (item.product.price * item.quantity) | currency }}</span>
               </li>
             }
           </ul>
           <dl class="summary">
-            <div><dt>Suma zamówienia</dt><dd>{{ cart.subtotal().toFixed(2) }} zł</dd></div>
-            <div><dt>Koszt dostawy</dt><dd>{{ cart.deliveryFee().toFixed(2) }} zł</dd></div>
+            <div><dt>Suma zamówienia</dt><dd>{{ cart.subtotal() | currency }}</dd></div>
+            <div><dt>Koszt dostawy</dt><dd>{{ cart.deliveryFee() | currency }}</dd></div>
             @if (cart.discount() > 0) {
-              <div class="discount-row"><dt>Rabat ({{ cart.discountCode()?.code }})</dt><dd>−{{ cart.discount().toFixed(2) }} zł</dd></div>
+              <div class="discount-row"><dt>Rabat ({{ cart.discountCode()?.code }})</dt><dd>−{{ cart.discount() | currency }}</dd></div>
             }
-            <div class="to-pay"><dt>Kwota do zapłaty</dt><dd>{{ cart.total().toFixed(2) }} zł</dd></div>
+            <div class="to-pay"><dt>Kwota do zapłaty</dt><dd>{{ cart.total() | currency }}</dd></div>
           </dl>
         </div>
       </aside>

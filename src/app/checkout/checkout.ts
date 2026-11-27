@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { email, form, FormField, pattern, required, validate } from '@angular/forms/signals';
 import { Order, paymentMethods, PaymentMethod } from '../models/order';
@@ -23,7 +24,7 @@ type CheckoutFormValue = {
 
 @Component({
   selector: 'app-checkout',
-  imports: [FormField, RouterLink, FieldErrors],
+  imports: [FormField, RouterLink, FieldErrors, CurrencyPipe],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',
 })

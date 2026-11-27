@@ -5,11 +5,16 @@
     <p class="not-found">Nie znaleziono restauracji.</p>
   } @else if (restaurant(); as restaurant) {
     @if (restaurant.imageUrl) {
-      <img
-        class="details-image"
-        [src]="restaurant.imageUrl + '?w=1200'"
-        [alt]="restaurant.name"
-      >
+      <div class="details-image">
+        <img
+          [ngSrc]="restaurant.imageUrl"
+          [alt]="restaurant.name"
+          fill
+          priority
+          sizes="(min-width: 1000px) 60vw, 100vw"
+          appImageFallback
+        >
+      </div>
     }
 
     <div class="details-header">
@@ -28,18 +33,14 @@
       <li><strong>Adres:</strong> {{ restaurant.address }}</li>
       <li>
         <strong>Rating:</strong>
-        @if (restaurant.rating > 0) {
-          ⭐ {{ restaurant.rating }}
-        } @else {
-          brak ocen
-        }
+        {{ restaurant.rating | rating }}
       </li>
       <li>
         <strong>Czas dostawy:</strong>
-        {{ restaurant.deliveryTimeMin }}–{{ restaurant.deliveryTimeMax }} min
+        {{ restaurant | deliveryTime }}
       </li>
-      <li><strong>Koszt dostawy:</strong> {{ restaurant.deliveryFee }} zł</li>
-      <li><strong>Min. zamówienie:</strong> {{ restaurant.minimumOrderValue }} zł</li>
+      <li><strong>Koszt dostawy:</strong> {{ restaurant.deliveryFee | currency }}</li>
+      <li><strong>Min. zamówienie:</strong> {{ restaurant.minimumOrderValue | currency }}</li>
     </ul>
 
     @if (!restaurant.isActive) {
@@ -52,7 +53,7 @@
       @if (cart.isEmpty()) {
         Koszyk jest pusty
       } @else if (isCartFromThisRestaurant()) {
-        <span>🛒 Koszyk: {{ cart.itemCount() }} szt. • {{ cart.subtotal().toFixed(2) }} zł</span>
+        <span>🛒 Koszyk: {{ cart.itemCount() }} szt. • {{ cart.subtotal() | currency }}</span>
         <a routerLink="/cart" class="btn btn-primary btn-sm">Przejdź do koszyka</a>
       } @else {
         <span>🛒 W koszyku masz produkty z restauracji „{{ cart.restaurant()?.name }}”</span>

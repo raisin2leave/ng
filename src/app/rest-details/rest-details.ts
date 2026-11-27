@@ -1,4 +1,6 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
+import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
+import { ImageFallback } from '../directives/image-fallback';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { ProductCard } from '../product-card/product-card';
@@ -7,10 +9,12 @@ import { Restaurants } from '../services/restaurants';
 import { Menus } from '../services/menus';
 import { Cart } from '../services/cart';
 import { DataState } from '../data-state/data-state';
+import { RatingPipe } from '../pipes/rating-pipe';
+import { DeliveryTimePipe } from '../pipes/delivery-time-pipe';
 
 @Component({
   selector: 'app-rest-details',
-  imports: [RouterLink, ProductCard, DataState],
+  imports: [RouterLink, ProductCard, DataState, CurrencyPipe, NgOptimizedImage, ImageFallback, RatingPipe, DeliveryTimePipe],
   templateUrl: './rest-details.html',
   styleUrl: './rest-details.scss',
 })

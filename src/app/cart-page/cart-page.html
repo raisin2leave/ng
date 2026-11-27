@@ -12,7 +12,7 @@
         <li class="cart-item">
           <div class="item-name">
             <strong>{{ item.product.name }}</strong>
-            <span class="unit-price">{{ item.product.price.toFixed(2) }} zł / szt.</span>
+            <span class="unit-price">{{ item.product.price | currency }} / szt.</span>
           </div>
 
           <div class="quantity" role="group" [attr.aria-label]="'Ilość: ' + item.product.name">
@@ -43,7 +43,7 @@
             >+</button>
           </div>
 
-          <span class="line-total">{{ (item.product.price * item.quantity).toFixed(2) }} zł</span>
+          <span class="line-total">{{ (item.product.price * item.quantity) | currency }}</span>
 
           <button
             type="button"
@@ -66,8 +66,8 @@
         </p>
         @if (cart.discountMissingAmount() > 0) {
           <p class="text-warning-emphasis mb-0" role="status">
-            Kod zadziała od {{ code.minimumSubtotal.toFixed(2) }} zł — brakuje
-            {{ cart.discountMissingAmount().toFixed(2) }} zł.
+            Kod zadziała od {{ code.minimumSubtotal | currency }} — brakuje
+            {{ cart.discountMissingAmount() | currency }}.
           </p>
         }
       } @else {
@@ -94,21 +94,21 @@
     <dl class="summary">
       <div>
         <dt>Suma zamówienia</dt>
-        <dd>{{ cart.subtotal().toFixed(2) }} zł</dd>
+        <dd>{{ cart.subtotal() | currency }}</dd>
       </div>
       <div>
         <dt>Koszt dostawy</dt>
-        <dd>{{ cart.deliveryFee().toFixed(2) }} zł</dd>
+        <dd>{{ cart.deliveryFee() | currency }}</dd>
       </div>
       @if (cart.discount() > 0) {
         <div class="discount-row">
           <dt>Rabat ({{ cart.discountCode()?.code }})</dt>
-          <dd>−{{ cart.discount().toFixed(2) }} zł</dd>
+          <dd>−{{ cart.discount() | currency }}</dd>
         </div>
       }
       <div class="to-pay">
         <dt>Kwota do zapłaty</dt>
-        <dd>{{ cart.total().toFixed(2) }} zł</dd>
+        <dd>{{ cart.total() | currency }}</dd>
       </div>
     </dl>
 

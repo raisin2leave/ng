@@ -1,4 +1,5 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -6,10 +7,12 @@ import { MenuCategory, Product } from '../models/menu';
 import { Menus } from '../services/menus';
 import { Restaurants } from '../services/restaurants';
 import { DataState } from '../data-state/data-state';
+import { Confirm } from '../directives/confirm';
+import { Autofocus } from '../directives/autofocus';
 
 @Component({
   selector: 'app-admin-menus',
-  imports: [FormsModule, RouterLink, DataState],
+  imports: [FormsModule, RouterLink, DataState, CurrencyPipe, Confirm, Autofocus],
   templateUrl: './admin-menus.html',
   styleUrl: './admin-menus.scss',
 })
@@ -109,22 +112,20 @@ export class AdminMenus {
     );
   }
 
-  deleteCategory(category: MenuCategory) {
-    let question = `Usunąć kategorię „${category.name}”?`;
-
+  deleteCategoryQuestion(category: MenuCategory) {
     if (category.products.length > 0) {
-      question = `Usunąć kategorię „${category.name}” razem z produktami (${category.products.length})?`;
+      return `Usunąć kategorię „${category.name}” razem z produktami (${category.products.length})?`;
     }
 
-    if (confirm(question)) {
-      this.send(this.menusService.deleteCategory(category.id), 'Nie udało się usunąć kategorii.');
-    }
+    return `Usunąć kategorię „${category.name}”?`;
+  }
+
+  deleteCategory(category: MenuCategory) {
+    this.send(this.menusService.deleteCategory(category.id), 'Nie udało się usunąć kategorii.');
   }
 
   deleteProduct(product: Product) {
-    if (confirm(`Usunąć produkt „${product.name}”?`)) {
-      this.send(this.menusService.deleteProduct(product.id), 'Nie udało się usunąć produktu.');
-    }
+    this.send(this.menusService.deleteProduct(product.id), 'Nie udało się usunąć produktu.');
   }
 
   private hasCategory(name: string) {

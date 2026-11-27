@@ -4,7 +4,7 @@
   @if (notFound()) {
     <p class="not-found">Nie znaleziono zamówienia.</p>
   } @else if (order(); as order) {
-    <form class="status-panel" (submit)="saveStatus($event)">
+    <div class="status-panel">
       <label for="new-status" class="form-label"><strong>Zmień status</strong></label>
       <div class="status-row">
         <select id="new-status" name="newStatus" class="form-select" [(ngModel)]="chosenStatus">
@@ -12,7 +12,13 @@
             <option [value]="status.value">{{ status.label }}</option>
           }
         </select>
-        <button type="submit" class="btn btn-primary" [disabled]="saving() || chosenStatus() === order.status">
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="saving() || chosenStatus() === order.status"
+          [appConfirm]="chosenStatus() === 'cancelled' ? `Czy na pewno anulować zamówienie nr ${order.id}?` : ''"
+          (confirmed)="saveStatus()"
+        >
           Zapisz status
         </button>
       </div>
@@ -22,7 +28,7 @@
       @if (saveError()) {
         <p class="alert alert-danger mt-2 mb-0" role="alert">{{ saveError() }}</p>
       }
-    </form>
+    </div>
 
     <app-order-view [order]="order" />
 

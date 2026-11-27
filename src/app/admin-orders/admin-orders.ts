@@ -1,14 +1,16 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Order, orderStatuses, statusBadgeClass, statusLabel } from '../models/order';
+import { Order, orderStatuses } from '../models/order';
 import { newestFirst, Orders } from '../services/orders';
 import { DataState } from '../data-state/data-state';
+import { StatusLabelPipe } from '../pipes/status-label-pipe';
+import { StatusBadgePipe } from '../pipes/status-badge-pipe';
 
 @Component({
   selector: 'app-admin-orders',
-  imports: [DatePipe, FormsModule, RouterLink, DataState],
+  imports: [DatePipe, FormsModule, RouterLink, DataState, CurrencyPipe, StatusLabelPipe, StatusBadgePipe],
   templateUrl: './admin-orders.html',
   styleUrl: './admin-orders.scss',
 })
@@ -21,8 +23,6 @@ export class AdminOrders {
 
   loadFailed = computed(() => this.ordersResource.error() !== undefined);
   orderStatuses = orderStatuses;
-  statusLabel = statusLabel;
-  statusBadgeClass = statusBadgeClass;
 
   statusFilter = signal('all');
 

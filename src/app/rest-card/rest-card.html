@@ -1,14 +1,19 @@
 <a class="restaurant-card" [routerLink]="['/restaurant', restaurant().id]">
 
-  @if (restaurant().imageUrl) {
-    <img
-      [src]="restaurant().imageUrl + '?w=600'"
-      [alt]="restaurant().name"
-      loading="lazy"
-    >
-  } @else {
-    <div class="no-image">Brak zdjęcia</div>
-  }
+  <div class="card-image">
+    @if (restaurant().imageUrl; as imageUrl) {
+      <img
+        [ngSrc]="imageUrl"
+        [alt]="restaurant().name"
+        fill
+        [priority]="isFirstOnScreen()"
+        sizes="(max-width: 700px) 100vw, 25vw"
+        appImageFallback
+      >
+    } @else {
+      <div class="no-image">Brak zdjęcia</div>
+    }
+  </div>
 
   <div class="restaurant-info">
 
@@ -24,25 +29,21 @@
 
     <p>{{ restaurant().description }}</p>
 
-    <p><strong>Cuisine:</strong> {{ restaurant().cuisine }}</p>
+    <p><strong>Cuisine:</strong> {{ restaurant().cuisine | cuisineLabel }}</p>
 
     <p>
       <strong>Rating:</strong>
-      @if (restaurant().rating > 0) {
-        ⭐ {{ restaurant().rating }}
-      } @else {
-        brak ocen
-      }
+      {{ restaurant().rating | rating }}
     </p>
 
     <p>
       <strong>Delivery time:</strong>
-      {{ restaurant().deliveryTimeMin }}–{{ restaurant().deliveryTimeMax }} min
+      {{ restaurant() | deliveryTime }}
     </p>
 
-    <p><strong>Delivery:</strong> {{ restaurant().deliveryFee }} zł</p>
+    <p><strong>Delivery:</strong> {{ restaurant().deliveryFee | currency }}</p>
 
-    <p><strong>Min. order:</strong> {{ restaurant().minimumOrderValue }} zł</p>
+    <p><strong>Min. order:</strong> {{ restaurant().minimumOrderValue | currency }}</p>
 
   </div>
 

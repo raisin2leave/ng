@@ -10,10 +10,14 @@
 }
 
 .details-image {
-  width: 100%;
+  position: relative;
   height: 320px;
-  object-fit: cover;
   border-radius: 12px;
+  overflow: hidden;
+}
+
+.details-image img {
+  object-fit: cover;
 }
 
 .details-header {

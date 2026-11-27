@@ -75,7 +75,12 @@
                 Resetuj hasło
               </button>
               @if (!isMe(user)) {
-                <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteUser(user)">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger"
+                  [appConfirm]="`Czy na pewno usunąć konto „${user.name}” (${user.email})?`"
+                  (confirmed)="deleteUser(user)"
+                >
                   Usuń konto
                 </button>
               }

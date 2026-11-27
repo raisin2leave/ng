@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Cart, MAX_QUANTITY } from '../services/cart';
@@ -7,7 +8,7 @@ import { CartItem } from '../models/cart';
 
 @Component({
   selector: 'app-cart-page',
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, CurrencyPipe],
   templateUrl: './cart-page.html',
   styleUrl: './cart-page.scss',
 })

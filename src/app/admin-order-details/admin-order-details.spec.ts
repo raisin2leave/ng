@@ -37,7 +37,7 @@ describe('AdminOrderDetails (admin FR-06, FR-07, order in the API)', () => {
     select.value = status;
     select.dispatchEvent(new Event('change'));
     fixture.detectChanges();
-    page.querySelector<HTMLFormElement>('.status-panel')!.dispatchEvent(new Event('submit'));
+    page.querySelector<HTMLButtonElement>('.status-panel button')!.click();
     fixture.detectChanges();
   }
 

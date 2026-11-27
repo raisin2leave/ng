@@ -1,9 +1,11 @@
 import { Component, input, output } from '@angular/core';
+import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
+import { ImageFallback } from '../directives/image-fallback';
 import { Product } from '../models/menu';
 
 @Component({
   selector: 'app-product-card',
-  imports: [],
+  imports: [CurrencyPipe, NgOptimizedImage, ImageFallback],
   templateUrl: './product-card.html',
   styleUrl: './product-card.scss',
 })

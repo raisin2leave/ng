@@ -4,10 +4,11 @@ import { RouterLink } from '@angular/router';
 import { UserProfile } from '../models/user';
 import { Auth } from '../services/auth';
 import { Users } from '../services/users';
+import { Confirm } from '../directives/confirm';
 
 @Component({
   selector: 'app-admin-users',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, Confirm],
   templateUrl: './admin-users.html',
   styleUrl: './admin-users.scss',
 })
@@ -72,9 +73,7 @@ export class AdminUsers {
       return;
     }
 
-    if (confirm(`Czy na pewno usunąć konto „${user.name}” (${user.email})?`)) {
-      this.usersService.deleteUser(user.id);
-      this.message.set(`Konto ${user.name} zostało usunięte.`);
-    }
+    this.usersService.deleteUser(user.id);
+    this.message.set(`Konto ${user.name} zostało usunięte.`);
   }
 }

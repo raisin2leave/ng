@@ -83,13 +83,9 @@
         @for (restaurant of visibleRestaurants(); track restaurant.id) {
           <tr [class.inactive-row]="!restaurant.isActive">
             <td>{{ restaurant.name }}</td>
-            <td>{{ cuisineLabel(restaurant.cuisine) }}</td>
+            <td>{{ restaurant.cuisine | cuisineLabel }}</td>
             <td>
-              @if (restaurant.rating > 0) {
-                ⭐ {{ restaurant.rating }}
-              } @else {
-                brak ocen
-              }
+              {{ restaurant.rating | rating }}
             </td>
             <td>
               @if (restaurant.isActive) {
@@ -109,7 +105,12 @@
                 Podgląd
               </a>
               @if (restaurant.isActive) {
-                <button type="button" class="btn btn-sm btn-outline-danger" (click)="deactivate(restaurant)">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger"
+                  [appConfirm]="`Czy na pewno chcesz dezaktywować restaurację „${restaurant.name}”?`"
+                  (confirmed)="deactivate(restaurant)"
+                >
                   Dezaktywuj
                 </button>
               } @else {
